@@ -1,7 +1,7 @@
 import React from "react";
 import { SalesList } from "./list";
 import { Drawer, Form, Input, Select, Space } from "antd";
-import { Database, supabaseServiceRoleClient } from "@/utilities";
+import { Database, supabaseClient } from "@/utilities";
 import {
   useGo,
   useNavigation,
@@ -71,7 +71,7 @@ export const SalesCreate = () => {
         undoableTimeout: 2000,
       });
     const { data, error } =
-      await supabaseServiceRoleClient.auth.admin.createUser({
+      await supabaseClient.auth.admin.createUser({
         email: email,
         password: password,
         email_confirm: true,

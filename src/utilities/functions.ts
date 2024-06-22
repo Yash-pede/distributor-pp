@@ -1,4 +1,4 @@
-import { supabaseServiceRoleClient } from "./supabaseClient";
+import { supabaseClient } from "./supabaseClient";
 import { validate } from "uuid";
 
 export const transactionStatusColor = (status: string) => {
@@ -17,7 +17,7 @@ export const transactionStatusColor = (status: string) => {
 };
 
 export const banUser = async (userId: string, banDuration: string) => {
-  const result = await supabaseServiceRoleClient.auth.admin.updateUserById(
+  const result = await supabaseClient.auth.admin.updateUserById(
     userId,
     { ban_duration: banDuration }
   );

@@ -18,7 +18,7 @@ import { App as AntdApp } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import authProvider from "./utilities/providers/authProvider";
 import { ColorModeContextProvider } from "./contexts/color-mode";
-import { supabaseServiceRoleClient } from "./utilities";
+import { supabaseClient } from "./utilities";
 import { resources } from "./config";
 import { Layout } from "./components/layout";
 import DashboardHome from "./routes/dashboard/show";
@@ -39,8 +39,8 @@ function App() {
           <DevtoolsProvider>
             <Refine
               auditLogProvider={auditLogProvider}
-              dataProvider={dataProvider(supabaseServiceRoleClient)}
-              liveProvider={liveProvider(supabaseServiceRoleClient)}
+              dataProvider={dataProvider(supabaseClient)}
+              liveProvider={liveProvider(supabaseClient)}
               authProvider={authProvider}
               routerProvider={routerBindings}
               notificationProvider={useNotificationProvider}

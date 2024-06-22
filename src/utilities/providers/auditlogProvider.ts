@@ -1,11 +1,11 @@
 import { AuditLogProvider } from "@refinedev/core";
-import { supabaseServiceRoleClient } from "../supabaseClient";
+import { supabaseClient } from "../supabaseClient";
 
 export const auditLogProvider: AuditLogProvider = {
   create: async (params) => {
     const { resource, meta, action, author, data, previousData } = params;
 
-    const { data: logs, error } = await supabaseServiceRoleClient
+    const { data: logs, error } = await supabaseClient
       .from("logs")
       .insert([
         {
@@ -24,7 +24,7 @@ export const auditLogProvider: AuditLogProvider = {
   update: async (params) => {
     const { resource, meta, action, author, data, previousData } = params;
 
-    const { data: logs, error } = await supabaseServiceRoleClient
+    const { data: logs, error } = await supabaseClient
       .from("logs")
       .insert([
         {
@@ -42,7 +42,7 @@ export const auditLogProvider: AuditLogProvider = {
   },
 
   get: async () => {
-    const { data, error } = await supabaseServiceRoleClient
+    const { data, error } = await supabaseClient
       .from("logs")
       .select("*");
     return data;
