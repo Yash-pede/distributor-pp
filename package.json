@@ -1,0 +1,58 @@
+{
+  "name": "distributor-pp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@ant-design/icons": "^5.3.7",
+    "@refinedev/antd": "^5.40.0",
+    "@refinedev/cli": "^2.16.34",
+    "@refinedev/core": "^4.51.0",
+    "@refinedev/devtools": "^1.2.4",
+    "@refinedev/react-router-v6": "^4.5.11",
+    "@refinedev/supabase": "^5.9.0",
+    "@tabler/icons-react": "^3.6.0",
+    "antd": "^5.18.3",
+    "dayjs": "^1.11.11",
+    "lodash": "^4.17.21",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.23.1",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.5",
+    "@types/node": "^18.19.37",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.3.5",
+    "supabase": "^1.178.2",
+    "typescript": "^5.5.2",
+    "vite": "^4.5.3",
+    "vite-tsconfig-paths": "^4.3.2"
+  },
+  "scripts": {
+    "dev": "refine dev -- --port 5273",
+    "build": "tsc && refine build",
+    "preview": "refine start",
+    "refine": "refine"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
