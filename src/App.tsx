@@ -28,6 +28,8 @@ import { auditLogProvider } from "./utilities/providers/auditlogProvider";
 import { SalesCreate, SalesList } from "./routes/clients/sales";
 import { AuditLogList } from "./routes/audit-log";
 import { AuthorizeUserRole } from "./components/layout/authorize";
+import { ShoppingCartProvider } from "./contexts/color-mode/cart/ShoppingCartContext";
+import { OrdersList, OrdersShow } from "./routes/orders";
 
 function App() {
   return (
@@ -50,71 +52,77 @@ function App() {
                 liveMode: "auto",
               }}
             >
-              <Routes>
-                <Route
-                  element={
-                    <Authenticated
-                      key="authenticated-inner"
-                      fallback={<CatchAllNavigate to="/login" />}
-                    >
-                      <Layout>
-                        <Outlet />
-                      </Layout>
-                    </Authenticated>
-                  }
-                >
-                  <Route element={<AuthorizeUserRole />}>
-                    <Route
-                      index
-                      element={<NavigateToResource resource="dashboard" />}
-                    />
+              <ShoppingCartProvider>
+                <Routes>
+                  <Route
+                    element={
+                      <Authenticated
+                        key="authenticated-inner"
+                        fallback={<CatchAllNavigate to="/login" />}
+                      >
+                        <Layout>
+                          <Outlet />
+                        </Layout>
+                      </Authenticated>
+                    }
+                  >
+                    <Route element={<AuthorizeUserRole />}>
+                      <Route
+                        index
+                        element={<NavigateToResource resource="dashboard" />}
+                      />
 
-                    <Route path="/dashboard">
-                      <Route index element={<DashboardHome />} />
-                    </Route>
+                      <Route path="/dashboard">
+                        <Route index element={<DashboardHome />} />
+                      </Route>
 
-                    <Route path="/products">
-                      <Route index element={<ProductsList />} />
-                      <Route path=":id" element={<ProductsEdit />} />
-                    </Route>
+                      <Route path="/products">
+                        <Route index element={<ProductsList />} />
+                        <Route path=":id" element={<ProductsEdit />} />
+                      </Route>
+                      <Route path="/orders">
+                        <Route index element={<OrdersList />} />
+                        <Route path=":id" element={<OrdersShow />} />
+                      </Route>
 
-                    <Route path="/clients">
-                      <Route path="sales">
-                        <Route index element={<SalesList />} />
-                        <Route path="create" element={<SalesCreate />} />
+                      <Route path="/clients">
+                        <Route path="sales">
+                          <Route index element={<SalesList />} />
+                          <Route path="create" element={<SalesCreate />} />
+                        </Route>
+                      </Route>
+
+                      <Route path="/administration">
+                        <Route path="audit-log">
+                          <Route index element={<AuditLogList />} />
+                        </Route>
                       </Route>
                     </Route>
 
-                    <Route path="/administration">
-                      <Route path="audit-log">
-                        <Route index element={<AuditLogList />} />
-                      </Route>
-                    </Route>
+                    <Route path="*" element={<ErrorComponent />} />
                   </Route>
-
-                  <Route path="*" element={<ErrorComponent />} />
-                </Route>
-                <Route
-                  element={
-                    <Authenticated
-                      key="authenticated-outer"
-                      fallback={<Outlet />}
-                    >
-                      <NavigateToResource />
-                    </Authenticated>
-                  }
-                >
-                  <Route path="/login" element={<AuthPage type="login" />} />
                   <Route
-                    path="/register"
-                    element={<AuthPage type="register" />}
-                  />
-                  <Route
-                    path="/forgot-password"
-                    element={<AuthPage type="forgotPassword" />}
-                  />
-                </Route>
-              </Routes>
+                    element={
+                      <Authenticated
+                        key="authenticated-outer"
+                        fallback={<Outlet />}
+                      >
+                        <NavigateToResource />
+                      </Authenticated>
+                    }
+                  >
+                    <Route path="/login" element={<AuthPage type="login" />} />
+                    <Route
+                      path="/register"
+                      element={<AuthPage type="register" />}
+                    />
+                    <Route
+                      path="/forgot-password"
+                      element={<AuthPage type="forgotPassword" />}
+                    />
+                  </Route>
+                </Routes>
+              </ShoppingCartProvider>
 
               <UnsavedChangesNotifier />
               <DocumentTitleHandler />

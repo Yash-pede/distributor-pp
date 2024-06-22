@@ -3,11 +3,13 @@ import type { FC } from "react";
 import { useDelete, useGo } from "@refinedev/core";
 
 import { DeleteOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
-import { Button, Card, Dropdown, Flex, Image } from "antd";
+import { Button, Card, Dropdown, Flex, Image, InputNumber } from "antd";
 import { Database } from "@/utilities";
 import { ProductCardSkeleton } from "./skeleton";
 import { Text } from "@/components";
 import { supabaseBucket_Product_images } from "@/utilities/constants";
+import { useShoppingCart } from "@/contexts/color-mode/cart/ShoppingCartContext";
+import { IconShoppingCart } from "@tabler/icons-react";
 
 type Props = {
   product: Database["public"]["Tables"]["products"]["Row"];
@@ -16,6 +18,13 @@ type Props = {
 export const ProductCard: FC<Props> = ({ product }) => {
   const go = useGo();
   const { mutate } = useDelete();
+
+  const {
+    getItemsQuantity,
+    decreaseCartQuantity,
+    increaseCartQuantity,
+    removeFromCart,
+  } = useShoppingCart();
 
   if (!product) return <ProductCardSkeleton />;
 
@@ -43,18 +52,6 @@ export const ProductCard: FC<Props> = ({ product }) => {
                       action: "edit",
                       id: product.id,
                     },
-                  });
-                },
-              },
-              {
-                danger: true,
-                label: "Delete product",
-                key: "2",
-                icon: <DeleteOutlined />,
-                onClick: () => {
-                  mutate({
-                    resource: "products",
-                    id: product.id,
                   });
                 },
               },
@@ -116,21 +113,88 @@ export const ProductCard: FC<Props> = ({ product }) => {
             <Text> MRP: {product.mrp}</Text>
           </div>
         </Flex>
-        <Button
-          style={{ width: "100%",margin:"1rem 0" }}
-          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-            e.stopPropagation();
-            go({
-              to: { resource: "stocks", action: "create" },
-              type: "push",
-              options: { keepQuery: true },
-              query: { product: product.id },
-            });
-          }}
-          type="primary"
-        >
-          Add to Stock
-        </Button>
+        {getItemsQuantity(product.id) === 0 ? (
+          <Button
+            type="primary"
+            size="large"
+            style={{
+              gap: "15px",
+              marginTop: "15px",
+              marginBottom: "15px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+            }}
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+              e.preventDefault();
+              increaseCartQuantity(product.id, product.base_q || 1);
+            }}
+          >
+            <IconShoppingCart /> Add to Cart
+          </Button>
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "0.8rem",
+              width: "100%",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "0.8rem",
+                width: "100%",
+              }}
+            >
+              <Button
+                type="primary"
+                disabled={getItemsQuantity(product.id) <= 5}
+                onClick={() =>
+                  decreaseCartQuantity(product.id, product.base_q || 1)
+                }
+              >
+                -
+              </Button>
+              <InputNumber
+                value={getItemsQuantity(product.id)}
+                defaultValue={getItemsQuantity(product.id)}
+                readOnly
+              />
+              <Button
+                type="primary"
+                onClick={() =>
+                  increaseCartQuantity(product.id, product.base_q || 1)
+                }
+              >
+                +
+              </Button>
+            </div>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Button
+                type="primary"
+                danger
+                style={{ width: "100%" }}
+                onClick={() => removeFromCart(product.id)}
+              >
+                Remove
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </Card>
   );

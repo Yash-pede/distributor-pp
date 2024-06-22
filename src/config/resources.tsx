@@ -38,7 +38,6 @@ export const resources: IResourceItem[] = [
       icon: <IconPackageExport />,
     },
     show: "/orders/:id",
-    edit: "/orders/edit/:id",
     create: "/orders/create",
   },
 

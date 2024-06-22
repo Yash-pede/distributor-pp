@@ -1,26 +1,41 @@
 import { type FC, type PropsWithChildren, useState } from "react";
 
 import { List, useTable } from "@refinedev/antd";
-import type { HttpError } from "@refinedev/core";
+import { useList, type HttpError } from "@refinedev/core";
 
 import {
   AppstoreOutlined,
   SearchOutlined,
+  ShoppingCartOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
-import { Form, Grid, Input, Radio, Space, Spin } from "antd";
+import { Button, Form, Grid, Input, Radio, Space, Spin } from "antd";
 import debounce from "lodash/debounce";
 
-import { ListTitleButton } from "@/components";
 import { Database } from "@/utilities";
 import { ProductsTableView } from "./components/table-view/table-view";
 import { ProductsCardView } from "./components/card-view";
+import { useShoppingCart } from "@/contexts/color-mode/cart/ShoppingCartContext";
 
 type View = "card" | "table";
 
 export const ProductsList: FC<PropsWithChildren> = ({ children }) => {
   const [view, setView] = useState<View>("card");
   const screens = Grid.useBreakpoint();
+
+  const { data: Stocks, isLoading: isStocksLoading } = useList<
+    Database["public"]["Tables"]["stocks"]["Row"],
+    HttpError
+  >({
+    resource: "stocks",
+    filters: [
+      {
+        field: "available_quantity",
+        operator: "gt",
+        value: 0,
+      },
+    ],
+  });
 
   const {
     tableProps,
@@ -37,6 +52,16 @@ export const ProductsList: FC<PropsWithChildren> = ({ children }) => {
     { name: string }
   >({
     resource: "products",
+    filters: {
+      mode: "server",
+      permanent: [
+        {
+          field: "id",
+          operator: "in",
+          value: Stocks?.data?.map((stock) => stock.product_id),
+        },
+      ],
+    },
     onSearch: (values) => {
       return [
         {
@@ -48,6 +73,9 @@ export const ProductsList: FC<PropsWithChildren> = ({ children }) => {
     },
     pagination: {
       pageSize: 12,
+    },
+    queryOptions: {
+      enabled: !isStocksLoading,
     },
   });
 
@@ -64,6 +92,7 @@ export const ProductsList: FC<PropsWithChildren> = ({ children }) => {
     });
   };
   const debouncedOnChange = debounce(onSearch, 500);
+  const { openCart } = useShoppingCart();
 
   return (
     <div className="page-container">
@@ -109,14 +138,24 @@ export const ProductsList: FC<PropsWithChildren> = ({ children }) => {
             </Space>
           );
         }}
+        title={
+          <Button
+            size="large"
+            type="dashed"
+            shape="default"
+            onClick={() => {
+              openCart();
+            }}
+          >
+            <ShoppingCartOutlined />
+            cart
+          </Button>
+        }
         contentProps={{
           style: {
             marginTop: "28px",
           },
         }}
-        title={
-          <ListTitleButton toPath="products" buttonText="Add new Product" />
-        }
       >
         {view === "table" ? (
           <ProductsTableView

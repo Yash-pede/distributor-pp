@@ -6,7 +6,7 @@ import {
   List,
   useTable,
 } from "@refinedev/antd";
-import { HttpError, getDefaultFilter, useList } from "@refinedev/core";
+import { HttpError, getDefaultFilter, useGetIdentity, useList } from "@refinedev/core";
 
 import { SearchOutlined } from "@ant-design/icons";
 import {
@@ -42,11 +42,25 @@ const getActionColor = (action: string): TagProps["color"] => {
 };
 
 export const AuditLogList = () => {
+  const {data:user} = useGetIdentity<any>();
   const { tableProps, filters, sorters, tableQueryResult } = useTable<Audit>({
     resource: "logs",
+    filters: {
+      mode:"server",
+      permanent: [
+        {
+          field: "author",
+          operator: "eq",
+          value: user?.id
+        }
+      ]
+    },
     sorters: {
       initial: [{ field: "created_at", order: "desc" }],
     },
+    queryOptions:{
+      enabled: !!user.id
+    }
   });
   const { data: users, isLoading: isLoadingUsers } = useList<
     Database["public"]["Tables"]["profiles"]["Row"],
@@ -60,8 +74,8 @@ export const AuditLogList = () => {
         value: [
           tableQueryResult.data?.data.map((item) => item.author),
           tableQueryResult.data?.data
-            .filter((item) => item.meta && isValidUUID(item.meta?.id as string))
-            .map((item) => item.meta?.id as string),
+            .filter((item:any) => item.meta && isValidUUID(item.meta?.id as string))
+            .map((item:any) => item.meta?.id as string),
         ],
       },
     ],
@@ -80,8 +94,8 @@ export const AuditLogList = () => {
         field: "id",
         operator: "in",
         value: tableQueryResult.data?.data
-          .filter((item) => item.meta && !isValidUUID(item.meta?.id as string))
-          .map((item) => item.meta?.id as string),
+          .filter((item:any) => item.meta && !isValidUUID(item.meta?.id as string))
+          .map((item:any) => item.meta?.id as string),
       },
     ],
     queryOptions: {

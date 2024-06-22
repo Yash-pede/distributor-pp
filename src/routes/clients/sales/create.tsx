@@ -40,7 +40,6 @@ export const SalesCreate = () => {
 
     if (status === "success" && isSuccess) {
       close && close("assign-user");
-      console.log("Setting user Role was successful");
     } else {
       close && close("assign-user");
       open &&
@@ -84,7 +83,6 @@ export const SalesCreate = () => {
           boss_id: boss_id,
         },
       });
-    console.log(data, error);
 
     if (data.user) {
       close && close("create-user");

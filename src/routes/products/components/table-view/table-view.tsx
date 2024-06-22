@@ -2,7 +2,6 @@ import type { FC } from "react";
 
 import {
   DateField,
-  DeleteButton,
   EditButton,
   FilterDropdown,
   TextField,
@@ -14,7 +13,7 @@ import {
 } from "@refinedev/core";
 
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
-import { Input, Select, Space, Table, type TableProps } from "antd";
+import { Input, Table, type TableProps } from "antd";
 import { PaginationTotal } from "@/components";
 import { Database } from "@/utilities";
 
@@ -72,11 +71,13 @@ export const ProductsTableView: FC<Props> = ({ tableProps, filters }) => {
       />
       <Table.Column<Database["public"]["Tables"]["products"]["Row"]>
         dataIndex="base_q"
+        hidden
         title="Base Quantity"
         render={(value) => <div>{value}</div>}
       />
       <Table.Column<Database["public"]["Tables"]["products"]["Row"]>
         dataIndex="free_q"
+        hidden
         title="Free Quantity"
         render={(value) => <div>{value}</div>}
       />
@@ -90,16 +91,12 @@ export const ProductsTableView: FC<Props> = ({ tableProps, filters }) => {
         dataIndex="id"
         title="Actions"
         render={(value) => (
-          <Space>
             <EditButton
               icon={<EyeOutlined />}
               hideText
               size="small"
               recordItemId={value}
             />
-
-            <DeleteButton hideText size="small" recordItemId={value} />
-          </Space>
         )}
       />
     </Table>
