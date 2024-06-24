@@ -9,6 +9,67 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      challan: {
+        Row: {
+          bill_amt: number
+          created_at: string
+          customer_id: number
+          distributor_id: string
+          id: number
+          pending_amt: number
+          product_info: Json
+          received_amt: number
+          sales_id: string | null
+          total_amt: number
+        }
+        Insert: {
+          bill_amt: number
+          created_at?: string
+          customer_id: number
+          distributor_id: string
+          id?: number
+          pending_amt: number
+          product_info: Json
+          received_amt: number
+          sales_id?: string | null
+          total_amt: number
+        }
+        Update: {
+          bill_amt?: number
+          created_at?: string
+          customer_id?: number
+          distributor_id?: string
+          id?: number
+          pending_amt?: number
+          product_info?: Json
+          received_amt?: number
+          sales_id?: string | null
+          total_amt?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challan_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challan_distributor_id_fkey"
+            columns: ["distributor_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challan_sales_id_fkey"
+            columns: ["sales_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string

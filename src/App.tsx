@@ -31,7 +31,7 @@ import { AuthorizeUserRole } from "./components/layout/authorize";
 import { ShoppingCartProvider } from "./contexts/color-mode/cart/ShoppingCartContext";
 import { OrdersList, OrdersShow } from "./routes/orders";
 import { InventoryDetails, InventoryList } from "./routes/inventory";
-import { ChallanList } from "./routes/challan";
+import { ChallanCreate, ChallanList } from "./routes/challan";
 import { CustomersCreate, CustomersList, CustomersShow } from "./routes/clients/customers";
 
 function App() {
@@ -93,6 +93,7 @@ function App() {
                       </Route>
                       <Route path="/challan">
                         <Route index element={<ChallanList />} />
+                        <Route path="create" element={<ChallanCreate />} />
                       </Route>
 
                       <Route path="/clients">
