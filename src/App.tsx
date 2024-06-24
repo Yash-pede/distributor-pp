@@ -30,6 +30,7 @@ import { AuditLogList } from "./routes/audit-log";
 import { AuthorizeUserRole } from "./components/layout/authorize";
 import { ShoppingCartProvider } from "./contexts/color-mode/cart/ShoppingCartContext";
 import { OrdersList, OrdersShow } from "./routes/orders";
+import { InventoryDetails, InventoryList } from "./routes/inventory";
 
 function App() {
   return (
@@ -83,6 +84,10 @@ function App() {
                       <Route path="/orders">
                         <Route index element={<OrdersList />} />
                         <Route path=":id" element={<OrdersShow />} />
+                      </Route>
+                      <Route path="/inventory">
+                        <Route index element={<InventoryList />} />
+                        <Route path="details" element={<InventoryDetails />} />
                       </Route>
 
                       <Route path="/clients">

@@ -8,6 +8,7 @@ import {
   IconPackage,
   IconPackageExport,
   IconPackageImport,
+  IconShoppingCart,
   IconTargetArrow,
   IconUser,
 } from "@tabler/icons-react";
@@ -39,6 +40,15 @@ export const resources: IResourceItem[] = [
     },
     show: "/orders/:id",
     create: "/orders/create",
+  },
+  {
+    name: "inventory",
+    list: "/inventory",
+    show: "/inventory/details",
+    meta: {
+      label: "Inventory",
+      icon: <IconShoppingCart />,
+    },
   },
 
   {
