@@ -59,7 +59,7 @@ export const SalesCreate = () => {
     phNo: string,
     password: string,
     full_name: string,
-    userrole: Database["public"]["Enums"]["ROLES"],
+    role: Database["public"]["Enums"]["ROLES"],
     boss_id: string
   ) => {
     open &&
@@ -79,14 +79,14 @@ export const SalesCreate = () => {
           username: name,
           phone: phNo,
           full_name: full_name,
-          role: userrole,
+          role: role,
           boss_id: boss_id,
         },
       });
 
     if (data.user) {
       close && close("create-user");
-      await setUserRole(data.user.id, userrole);
+      await setUserRole(data.user.id, role);
       open &&
         open({
           key: "create-user",
@@ -190,7 +190,7 @@ export const SalesCreate = () => {
                 <Input style={{ width: "80%" }} placeholder="123456789" />
               </Space.Compact>
             </Form.Item>
-            <Form.Item label="User Role" name={"userrole"} required>
+            <Form.Item label="User Role" name={"role"} required>
               <Select
                 disabled
                 placeholder="Select a status"
