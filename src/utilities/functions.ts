@@ -1,3 +1,4 @@
+import { TagProps } from "antd";
 import { supabaseClient } from "./supabaseClient";
 import { validate } from "uuid";
 
@@ -13,6 +14,19 @@ export const transactionStatusColor = (status: string) => {
       return "green";
     default:
       return "grey";
+  }
+};
+
+export const getActionColor = (action: string): TagProps["color"] => {
+  switch (action) {
+    case "create":
+      return "green";
+    case "update":
+      return "cyan";
+    case "delete":
+      return "red";
+    default:
+      return "default";
   }
 };
 
