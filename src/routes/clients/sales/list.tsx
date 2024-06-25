@@ -19,8 +19,6 @@ export const SalesList: FC<PropsWithChildren> = ({ children }) => {
   const screens = Grid.useBreakpoint();
   const {data:user} = useGetIdentity<any>();
 
-  const{data:user}=useGetIdentity<any>();
-
   const {
     tableProps,
     tableQueryResult,
