@@ -13,7 +13,6 @@ import { ListTitleButton } from "@/components";
 import { Database } from "@/utilities";
 import { SalesTableView } from "./components/table-view/table-view";
 
-type View = "card" | "table";
 
 export const SalesList: FC<PropsWithChildren> = ({ children }) => {
   const screens = Grid.useBreakpoint();

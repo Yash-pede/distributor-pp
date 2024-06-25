@@ -1,9 +1,6 @@
 import { useRef, useState, type FC } from "react";
 
 import {
-  DateField,
-  DeleteButton,
-  EditButton,
   FilterDropdown,
   ShowButton,
   TextField,
@@ -12,8 +9,6 @@ import {
   type CrudFilters,
   type CrudSorting,
   getDefaultFilter,
-  useList,
-  GetListResponse,
 } from "@refinedev/core";
 
 import { EyeOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
@@ -61,26 +56,7 @@ export const SalesTableView: FC<Props> = ({
       inputRef.current?.focus();
     }, 0);
   };
-  const { data: Profile, isLoading: isLoadingProfile } = useList({
-    resource: "profiles",
-    filters: [
-      {
-        field: "role",
-        operator: "eq",
-        value: "distributor",
-      },
-      {
-        field: "id",
-        operator: "in",
-        value: tableQueryResult?.data
-          ?.filter((item:any) => !!item.boss_id)
-          .map((item:any) => item.boss_id),
-      },
-    ],
-    queryOptions: {
-      enabled: !!tableQueryResult,
-    },
-  });
+
   return (
     <Table
       {...tableProps}
