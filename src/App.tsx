@@ -30,6 +30,9 @@ import { AuditLogList } from "./routes/audit-log";
 import { AuthorizeUserRole } from "./components/layout/authorize";
 import { ShoppingCartProvider } from "./contexts/color-mode/cart/ShoppingCartContext";
 import { OrdersList, OrdersShow } from "./routes/orders";
+import { InventoryDetails, InventoryList } from "./routes/inventory";
+import { ChallanCreate, ChallanList } from "./routes/challan";
+import { CustomersCreate, CustomersList, CustomersShow } from "./routes/clients/customers";
 
 function App() {
   return (
@@ -84,6 +87,14 @@ function App() {
                         <Route index element={<OrdersList />} />
                         <Route path=":id" element={<OrdersShow />} />
                       </Route>
+                      <Route path="/inventory">
+                        <Route index element={<InventoryList />} />
+                        <Route path="details" element={<InventoryDetails />} />
+                      </Route>
+                      <Route path="/challan">
+                        <Route index element={<ChallanList />} />
+                        <Route path="create" element={<ChallanCreate />} />
+                      </Route>
 
                       <Route path="/clients">
                         <Route path="sales">
@@ -91,6 +102,11 @@ function App() {
                           <Route path="create" element={<SalesCreate />} />
                           <Route path="edit/:id" element={<SalesEdit />} />
                           <Route path=":id" element={<SalesShow />} />
+                        </Route>
+                        <Route path="customers">
+                          <Route index element={<CustomersList />} />
+                          <Route path="create" element={<CustomersCreate />} />
+                          <Route path=":id" element={<CustomersShow />} />
                         </Route>
                       </Route>
 

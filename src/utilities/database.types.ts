@@ -9,9 +9,121 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      challan: {
+        Row: {
+          bill_amt: number
+          created_at: string
+          customer_id: number
+          distributor_id: string
+          id: number
+          pending_amt: number
+          product_info: Json
+          received_amt: number
+          sales_id: string | null
+          total_amt: number
+        }
+        Insert: {
+          bill_amt: number
+          created_at?: string
+          customer_id: number
+          distributor_id: string
+          id?: number
+          pending_amt: number
+          product_info: Json
+          received_amt: number
+          sales_id?: string | null
+          total_amt: number
+        }
+        Update: {
+          bill_amt?: number
+          created_at?: string
+          customer_id?: number
+          distributor_id?: string
+          id?: number
+          pending_amt?: number
+          product_info?: Json
+          received_amt?: number
+          sales_id?: string | null
+          total_amt?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challan_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challan_distributor_id_fkey"
+            columns: ["distributor_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challan_sales_id_fkey"
+            columns: ["sales_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          address: string
+          created_at: string
+          distributor_id: string
+          email: string | null
+          full_name: string
+          id: number
+          phone: string
+          sales_id: string
+          specialization: string | null
+        }
+        Insert: {
+          address: string
+          created_at?: string
+          distributor_id: string
+          email?: string | null
+          full_name: string
+          id?: number
+          phone: string
+          sales_id: string
+          specialization?: string | null
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          distributor_id?: string
+          email?: string | null
+          full_name?: string
+          id?: number
+          phone?: string
+          sales_id?: string
+          specialization?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_distributor_id_fkey"
+            columns: ["distributor_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customers_sales_id_fkey"
+            columns: ["sales_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory: {
         Row: {
-          batch_info: Json
+          batch_id: string
           created_at: string
           distributor_id: string
           id: number
@@ -20,8 +132,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          batch_info: Json
-          created_at: string
+          batch_id: string
+          created_at?: string
           distributor_id: string
           id?: number
           product_id: number
@@ -29,7 +141,7 @@ export type Database = {
           updated_at: string
         }
         Update: {
-          batch_info?: Json
+          batch_id?: string
           created_at?: string
           distributor_id?: string
           id?: number
@@ -107,7 +219,7 @@ export type Database = {
           status: Database["public"]["Enums"]["order_status"]
         }
         Insert: {
-          created_at: string
+          created_at?: string
           distributor_id: string
           id?: number
           order: Json
@@ -239,7 +351,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_batch_info_to_order: {
+        Args: {
+          order_id: number
+          product_id: number
+          key_value: number
+          batch_id: string
+          quantity_value: number
+        }
+        Returns: undefined
+      }
+      add_to_d_inventory: {
+        Args: {
+          distributor_id_param: string
+          product_id_param: number
+          batch_id_param: string
+          batch_quantity_param: number
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       order_status:
@@ -248,7 +378,7 @@ export type Database = {
         | "Cancelled"
         | "InProcess"
         | "Defected"
-      ROLES: "admin" | "distributor" | "sales" | "null"
+      ROLES: "admin" | "distributor" | "sales" | "null" | "customer"
       transfer_status: "Credit" | "Debit" | "Requested" | "Approved"
     }
     CompositeTypes: {

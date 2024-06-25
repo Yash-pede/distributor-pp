@@ -127,8 +127,7 @@ export const SalesTableView: FC<Props> = ({
         render={(value) => <TextField value={"+91 " + value} />}
       />
       <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
-        dataIndex="boss_id"
-        hidden
+        dataIndex="boss_id" hidden
         title="Distributor"
         render={(value) => value}
       />

@@ -41,3 +41,12 @@ export const banUser = async (userId: string, banDuration: string) => {
 export function isValidUUID(uuid: string) {
   return validate(uuid);
 }
+
+
+export enum OrderStatus {
+  Pending = "Pending",
+  Fulfilled = "Fulfilled",
+  Cancelled = "Cancelled",
+  InProcess = "InProcess",
+  Defected = "Defected",
+}

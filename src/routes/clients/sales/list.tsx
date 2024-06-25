@@ -17,6 +17,7 @@ type View = "card" | "table";
 
 export const SalesList: FC<PropsWithChildren> = ({ children }) => {
   const screens = Grid.useBreakpoint();
+  const {data:user} = useGetIdentity<any>();
 
   const{data:user}=useGetIdentity<any>();
 
@@ -42,11 +43,10 @@ export const SalesList: FC<PropsWithChildren> = ({ children }) => {
           field: "role",
           operator: "eq",
           value: "sales",
-        },
-        {
+        },{
           field: "boss_id",
           operator: "eq",
-          value: user.id,
+          value: user?.id
         }
       ]
     },
