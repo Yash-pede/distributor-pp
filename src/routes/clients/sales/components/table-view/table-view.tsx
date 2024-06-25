@@ -5,6 +5,7 @@ import {
   DeleteButton,
   EditButton,
   FilterDropdown,
+  ShowButton,
   TextField,
 } from "@refinedev/antd";
 import {
@@ -127,6 +128,7 @@ export const SalesTableView: FC<Props> = ({
       />
       <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
         dataIndex="boss_id"
+        hidden
         title="Distributor"
         render={(value) => value}
       />
@@ -136,7 +138,7 @@ export const SalesTableView: FC<Props> = ({
         title="Actions"
         render={(value, row) => (
           <Space>
-            <EditButton
+            <ShowButton
               icon={<EyeOutlined />}
               hideText
               size="small"

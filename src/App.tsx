@@ -25,7 +25,7 @@ import DashboardHome from "./routes/dashboard/show";
 import { ProductsList, ProductsEdit } from "./routes/products";
 import { auditLogProvider } from "./utilities/providers/auditlogProvider";
 
-import { SalesCreate, SalesList } from "./routes/clients/sales";
+import { SalesCreate, SalesEdit, SalesList, SalesShow } from "./routes/clients/sales";
 import { AuditLogList } from "./routes/audit-log";
 import { AuthorizeUserRole } from "./components/layout/authorize";
 import { ShoppingCartProvider } from "./contexts/color-mode/cart/ShoppingCartContext";
@@ -89,6 +89,8 @@ function App() {
                         <Route path="sales">
                           <Route index element={<SalesList />} />
                           <Route path="create" element={<SalesCreate />} />
+                          <Route path="edit/:id" element={<SalesEdit />} />
+                          <Route path=":id" element={<SalesShow />} />
                         </Route>
                       </Route>
 

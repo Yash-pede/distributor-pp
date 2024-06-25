@@ -1,7 +1,7 @@
 import { type FC, type PropsWithChildren } from "react";
 
 import { List, useTable } from "@refinedev/antd";
-import type { HttpError } from "@refinedev/core";
+import { useGetIdentity, type HttpError } from "@refinedev/core";
 
 import {
   SearchOutlined,
@@ -17,6 +17,8 @@ type View = "card" | "table";
 
 export const SalesList: FC<PropsWithChildren> = ({ children }) => {
   const screens = Grid.useBreakpoint();
+
+  const{data:user}=useGetIdentity<any>();
 
   const {
     tableProps,
@@ -40,6 +42,11 @@ export const SalesList: FC<PropsWithChildren> = ({ children }) => {
           field: "role",
           operator: "eq",
           value: "sales",
+        },
+        {
+          field: "boss_id",
+          operator: "eq",
+          value: user.id,
         }
       ]
     },
@@ -60,6 +67,9 @@ export const SalesList: FC<PropsWithChildren> = ({ children }) => {
     pagination: {
       pageSize: 12,
     },
+    queryOptions:{
+      enabled:!!user.id,
+    }
   });
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
