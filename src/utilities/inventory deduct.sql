@@ -1,3 +1,15 @@
+-- Function to log batch details
+CREATE OR REPLACE FUNCTION log_batch_details(
+    order_id BIGINT,
+    product_id BIGINT,
+    batch_info JSONB
+) RETURNS VOID AS $$
+BEGIN
+    INSERT INTO challan_batch_info (challan_id, product_id, batch_info)
+    VALUES (order_id, product_id, batch_info);
+END;
+$$ LANGUAGE plpgsql;
+
 -- Function to deduct inventory based on the product_info column in challan
 CREATE OR REPLACE FUNCTION deduct_inventory() RETURNS TRIGGER AS $$
 DECLARE
@@ -5,7 +17,9 @@ DECLARE
     product_id_local INTEGER;
     ordered_quantity_local INTEGER;
     remaining_quantity INTEGER;
-    inventory_row RECORD;  -- Define a record variable for inventory_row
+    inventory_row RECORD;
+    batch_details JSONB := '[]'::jsonb;
+    batch_log JSONB;
 BEGIN
     -- Loop over each product in the product_info JSONB array
     FOR product_item IN SELECT * FROM jsonb_array_elements(NEW.product_info)
@@ -31,9 +45,16 @@ BEGIN
                 UPDATE inventory
                 SET quantity = quantity - remaining_quantity
                 WHERE id = inventory_row.id;
+                
+                batch_log := jsonb_build_object('batch_id', inventory_row.batch_id, 'quantity', remaining_quantity);
+                batch_details := batch_details || batch_log;
+                
                 remaining_quantity := 0;  -- All ordered quantity deducted
             ELSE
                 -- Not enough in this inventory row, deduct what's available
+                batch_log := jsonb_build_object('batch_id', inventory_row.batch_id, 'quantity', inventory_row.quantity);
+                batch_details := batch_details || batch_log;
+                
                 remaining_quantity := remaining_quantity - inventory_row.quantity;
                 UPDATE inventory
                 SET quantity = 0
@@ -45,13 +66,19 @@ BEGIN
         IF remaining_quantity > 0 THEN
             RAISE EXCEPTION 'Insufficient inventory for product_id %', product_id_local;
         END IF;
+        
+        -- Log batch details for the product
+        PERFORM log_batch_details(NEW.id, product_id_local, batch_details);
+        
+        -- Reset batch details for the next product
+        batch_details := '[]'::jsonb;
     END LOOP;
 
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger to call the function after an insert on challan table
+-- Create the trigger to call the deduct_inventory function after insert on challan
 CREATE OR REPLACE TRIGGER trg_deduct_inventory
 AFTER INSERT ON challan
 FOR EACH ROW
