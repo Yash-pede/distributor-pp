@@ -43,6 +43,7 @@ export const ProductsList: FC<PropsWithChildren> = ({ children }) => {
     searchFormProps,
     filters,
     sorters,
+    sorter,
     setCurrent,
     setPageSize,
     setFilters,
