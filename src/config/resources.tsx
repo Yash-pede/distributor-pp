@@ -78,6 +78,7 @@ export const resources: IResourceItem[] = [
     edit: "/clients/customers/edit/:id",
     meta: {
       label: "Customers",
+      
       parent: "clients",
       icon: <IconUser />,
     },

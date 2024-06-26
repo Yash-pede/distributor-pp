@@ -156,7 +156,7 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
               >
                 Update
               </Button>
-              <ShowButton recordItemId={row.id} />
+              <ShowButton recordItemId={row.id}  />
             </div>
           )}
         />

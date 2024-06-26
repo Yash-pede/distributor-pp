@@ -26,7 +26,7 @@ import { Database } from "@/utilities";
 export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
   const go = useGo();
   const [challan, setChallan] = React.useState<any>([]);
-  const [avalableqty, setAvalableqty] = React.useState<any>();
+  const [availableqty, setAvailableqty] = React.useState<any>();
   const [customer, setCustomer] = React.useState<any>();
   const [totalAmount, setTotalAmount] = React.useState<any>();
   const [billAmount, setBillAmount] = React.useState<any>();
@@ -91,7 +91,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
       return [values];
     });
     form.resetFields();
-    setAvalableqty(null);
+    setAvailableqty(null);
   };
   const {
     close: closePdfModal,
@@ -275,9 +275,10 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
         okButtonProps={{ style: { display: "none" } }}
         onCancel={() => {
           form.resetFields();
-          setAvalableqty(null);
+          setAvailableqty(null);
           close();
         }}
+        
       >
         <Form
           form={form}
@@ -286,16 +287,17 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
           wrapperCol={{ span: 16 }}
           onFinish={onFinish}
           onValuesChange={(values) => {
-            setAvalableqty(
-              inventory?.data.find(
-                (stock: any) => stock.product_id === values.product_id,
-              )?.quantity,
-            );
+            const totalAvailableQty = inventory?.data
+            .filter((stock) => stock.product_id === values.product_id)
+            .reduce((total: number, stock) => total + stock.quantity, 0);
+          
+          setAvailableqty(totalAvailableQty);
+          
           }}
         >
-          {avalableqty ? (
+          {availableqty ? (
             <Button type="text" style={{ width: "100%" }}>
-              Avalable Quantity {avalableqty}
+              Available Quantity {availableqty}
             </Button>
           ) : null}
           <Form.Item<challanProductAddingType>
@@ -317,8 +319,8 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
               },
               {
                 validator(rule, value, callback) {
-                  if (value > avalableqty) {
-                    callback("Quantity should be less than avalable quantity");
+                  if (value > availableqty) {
+                    callback("Quantity should be less than available quantity");
                   }
                   callback();
                 },

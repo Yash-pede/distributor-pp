@@ -70,6 +70,38 @@ export type Database = {
           },
         ]
       }
+      challan_batch_info: {
+        Row: {
+          batch_info: Json
+          challan_id: number
+          created_at: string
+          id: number
+          product_id: number
+        }
+        Insert: {
+          batch_info: Json
+          challan_id: number
+          created_at?: string
+          id?: number
+          product_id: number
+        }
+        Update: {
+          batch_info?: Json
+          challan_id?: number
+          created_at?: string
+          id?: number
+          product_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "batch_info_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string
@@ -138,7 +170,7 @@ export type Database = {
           id?: number
           product_id: number
           quantity: number
-          updated_at: string
+          updated_at?: string
         }
         Update: {
           batch_id?: string
@@ -367,6 +399,14 @@ export type Database = {
           product_id_param: number
           batch_id_param: string
           batch_quantity_param: number
+        }
+        Returns: undefined
+      }
+      log_batch_details: {
+        Args: {
+          order_id: number
+          product_id: number
+          batch_info: Json
         }
         Returns: undefined
       }
