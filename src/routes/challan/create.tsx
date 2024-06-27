@@ -286,14 +286,6 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           onFinish={onFinish}
-          onValuesChange={(values) => {
-            const totalAvailableQty = inventory?.data
-            .filter((stock) => stock.product_id === values.product_id)
-            .reduce((total: number, stock) => total + stock.quantity, 0);
-          
-          setAvailableqty(totalAvailableQty);
-          
-          }}
         >
           {availableqty ? (
             <Button type="text" style={{ width: "100%" }}>
@@ -312,20 +304,6 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
             label="Quantity"
             name="quantity"
             initialValue={0}
-            rules={[
-              {
-                required: true,
-                message: "Quantity is required",
-              },
-              {
-                validator(rule, value, callback) {
-                  if (value > availableqty) {
-                    callback("Quantity should be less than available quantity");
-                  }
-                  callback();
-                },
-              },
-            ]}
           >
             <Flex align="center" gap="10px">
               <Button
