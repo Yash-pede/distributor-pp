@@ -6,6 +6,7 @@ import {
   Input,
   InputNumber,
   Modal,
+  Skeleton,
   Table,
   Typography,
 } from "antd";
@@ -21,6 +22,7 @@ import { useGetIdentity, useList, useUpdate } from "@refinedev/core";
 import FormItem from "antd/lib/form/FormItem";
 import { SearchOutlined } from "@ant-design/icons";
 import { Database } from "@/utilities";
+import { Text } from "@/components";
 
 export const ChallanList = ({ sales }: { sales?: boolean }) => {
   const [IdToUpdateReceived, setIdToUpdateReceived] = React.useState<any>(null);
@@ -126,6 +128,23 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
           title="Received"
         />
         <Table.Column
+          sorter={{ multiple: 2 }}
+          defaultSortOrder={getDefaultSortOrder("customer_id", sorter)}
+          dataIndex="customer_id"
+          title="customer"
+          render={(value) => {
+            if (isLoadingCustomers) return <Skeleton.Button />;
+            return (
+              <Text>
+                {
+                  Customers?.data?.find((customer) => customer.id === value)
+                    ?.full_name
+                }
+              </Text>
+            );
+          }}
+        />
+        <Table.Column
           title="Action"
           render={(row) => (
             <div style={{ display: "flex", gap: "10px" }}>
@@ -137,7 +156,7 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
               >
                 Update
               </Button>
-              <ShowButton recordItemId={row.id} />
+              <ShowButton recordItemId={row.id}  />
             </div>
           )}
         />

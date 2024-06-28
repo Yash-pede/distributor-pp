@@ -64,9 +64,9 @@ export const PdfLayout: React.FC<PdfProps> = ({
     );
   const date = new Date();
 
-  let day = date.getDate();
-  let month = date.getMonth() + 1;
-  let year = date.getFullYear();
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
   const totalAmount = billInfo.reduce((total, item) => {
     const product = products?.data.find(
       (product: any) => product.id === item.product_id

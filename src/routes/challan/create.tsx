@@ -26,7 +26,7 @@ import { Database } from "@/utilities";
 export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
   const go = useGo();
   const [challan, setChallan] = React.useState<any>([]);
-  const [avalableqty, setAvalableqty] = React.useState<any>();
+  const [availableqty, setAvailableqty] = React.useState<any>();
   const [customer, setCustomer] = React.useState<any>();
   const [totalAmount, setTotalAmount] = React.useState<any>();
   const [billAmount, setBillAmount] = React.useState<any>();
@@ -91,7 +91,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
       return [values];
     });
     form.resetFields();
-    setAvalableqty(null);
+    setAvailableqty(null);
   };
   const {
     close: closePdfModal,
@@ -275,9 +275,10 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
         okButtonProps={{ style: { display: "none" } }}
         onCancel={() => {
           form.resetFields();
-          setAvalableqty(null);
+          setAvailableqty(null);
           close();
         }}
+        
       >
         <Form
           form={form}
@@ -285,17 +286,10 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           onFinish={onFinish}
-          onValuesChange={(values) => {
-            setAvalableqty(
-              inventory?.data.find(
-                (stock: any) => stock.product_id === values.product_id,
-              )?.quantity,
-            );
-          }}
         >
-          {avalableqty ? (
+          {availableqty ? (
             <Button type="text" style={{ width: "100%" }}>
-              Avalable Quantity {avalableqty}
+              Available Quantity {availableqty}
             </Button>
           ) : null}
           <Form.Item<challanProductAddingType>
@@ -310,20 +304,6 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
             label="Quantity"
             name="quantity"
             initialValue={0}
-            rules={[
-              {
-                required: true,
-                message: "Quantity is required",
-              },
-              {
-                validator(rule, value, callback) {
-                  if (value > avalableqty) {
-                    callback("Quantity should be less than avalable quantity");
-                  }
-                  callback();
-                },
-              },
-            ]}
           >
             <Flex align="center" gap="10px">
               <Button

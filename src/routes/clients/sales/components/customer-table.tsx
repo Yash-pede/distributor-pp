@@ -118,7 +118,7 @@ export const CustomerTable = ({
             go({
               to: {
                 action: "create",
-                resource: "customer",
+                resource: "customers",
               },
               query: {
                 salesId: salesDetails.id,
