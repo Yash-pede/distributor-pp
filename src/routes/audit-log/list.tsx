@@ -144,6 +144,8 @@ export const AuditLogList = () => {
           <Table.Column
             dataIndex="id"
             title="ID"
+            sorter={{ multiple: 2 }}
+            defaultSortOrder={getDefaultSortOrder("id", sorters)}
             filterIcon={<SearchOutlined />}
             filterDropdown={(props) => (
               <FilterDropdown {...props}>

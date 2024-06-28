@@ -1,13 +1,19 @@
 import { Database } from "@/utilities";
-import { DateField, useTable } from "@refinedev/antd";
-import { useGetIdentity, useList } from "@refinedev/core";
-import { List, Skeleton, Table } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+import {
+  DateField,
+  FilterDropdown,
+  useSelect,
+  useTable,
+} from "@refinedev/antd";
+import { getDefaultFilter, getDefaultSortOrder, useGetIdentity, useList } from "@refinedev/core";
+import { List, Select, Skeleton, Table } from "antd";
 import React from "react";
 
 export const InventoryDetails = () => {
   const { data: user } = useGetIdentity<any>();
 
-  const { tableProps, tableQueryResult } = useTable<
+  const { tableProps, tableQueryResult, filters, sorters } = useTable<
     Database["public"]["Tables"]["inventory"]["Row"]
   >({
     resource: "inventory",
@@ -39,6 +45,20 @@ export const InventoryDetails = () => {
     },
   });
 
+  const { selectProps } = useSelect({
+    resource: "products",
+    optionLabel: "name",
+    optionValue: "id",
+    defaultValue: getDefaultFilter("products.name", filters, "in"),
+  });
+
+  const { selectProps: selectBatchProps } = useSelect({
+    resource: "inventory",
+    optionLabel: "batch_id",
+    optionValue: "batch_id",
+    defaultValue: getDefaultFilter("inventory.batch_id", filters, "in"),
+  });
+
   return (
     <List header={<h1>Inventory Details</h1>}>
       <Table {...tableProps} rowKey={"id"}>
@@ -46,6 +66,16 @@ export const InventoryDetails = () => {
         <Table.Column
           dataIndex="product_id"
           title="Product ID"
+          filterIcon={<SearchOutlined />}
+          filterDropdown={(props) => (
+            <FilterDropdown {...props} mapValue={(value) => value}>
+              <Select
+                style={{ minWidth: 200 }}
+                mode="multiple"
+                {...selectProps}
+              />
+            </FilterDropdown>
+          )}
           render={(value) => {
             if (isLoadingProducts) {
               return <Skeleton.Input style={{ width: 100 }} />;
@@ -56,8 +86,26 @@ export const InventoryDetails = () => {
             return product?.name;
           }}
         />
-        <Table.Column dataIndex="quantity" title="Quantity" />
-        <Table.Column dataIndex="batch_id" title="Batch ID" />
+        <Table.Column
+          dataIndex="quantity"
+          title="Quantity"
+          sorter={{ multiple: 2 }}
+          defaultSortOrder={getDefaultSortOrder("quantity", sorters)}
+        />
+        <Table.Column
+          dataIndex="batch_id"
+          title="Batch ID"
+          filterIcon={<SearchOutlined />}
+          filterDropdown={(props) => (
+            <FilterDropdown {...props} mapValue={(value) => value}>
+              <Select
+                style={{ minWidth: 200 }}
+                mode="multiple"
+                {...selectBatchProps}
+              />
+            </FilterDropdown>
+          )}
+        />
         <Table.Column
           dataIndex="created_at"
           title="Created"

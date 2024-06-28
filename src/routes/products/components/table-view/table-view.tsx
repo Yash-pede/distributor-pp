@@ -6,6 +6,7 @@ import {
   FilterDropdown,
   TextField,
   getDefaultSortOrder,
+  useSelect,
 } from "@refinedev/antd";
 import {
   type CrudFilters,
@@ -14,7 +15,7 @@ import {
 } from "@refinedev/core";
 
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
-import { Input, Table, type TableProps } from "antd";
+import { Input, Select, Table, type TableProps } from "antd";
 import { PaginationTotal } from "@/components";
 import { Database } from "@/utilities";
 
@@ -24,7 +25,18 @@ type Props = {
   sorters: CrudSorting;
 };
 
-export const ProductsTableView: FC<Props> = ({ tableProps, filters, sorters }) => {
+export const ProductsTableView: FC<Props> = ({
+  tableProps,
+  filters,
+  sorters,
+}) => {
+  const { selectProps } = useSelect({
+    resource: "products",
+    optionLabel: "name",
+    optionValue: "name",
+    defaultValue: getDefaultFilter("products.name", filters, "in"),
+  });
+
   return (
     <Table
       {...tableProps}
@@ -49,8 +61,12 @@ export const ProductsTableView: FC<Props> = ({ tableProps, filters, sorters }) =
         defaultFilteredValue={getDefaultFilter("name", filters)}
         filterIcon={<SearchOutlined />}
         filterDropdown={(props) => (
-          <FilterDropdown {...props}>
-            <Input placeholder="Search Product" />
+          <FilterDropdown {...props} mapValue={(value) => value}>
+            <Select
+              style={{ minWidth: 200 }}
+              mode="multiple"
+              {...selectProps}
+            />
           </FilterDropdown>
         )}
         render={(value) => <div>{value}</div>}

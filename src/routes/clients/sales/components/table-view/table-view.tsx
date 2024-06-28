@@ -4,11 +4,13 @@ import {
   FilterDropdown,
   ShowButton,
   TextField,
+  useSelect,
 } from "@refinedev/antd";
 import {
   type CrudFilters,
   type CrudSorting,
   getDefaultFilter,
+  useGetIdentity,
 } from "@refinedev/core";
 
 import { EyeOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
@@ -42,6 +44,8 @@ export const SalesTableView: FC<Props> = ({
   const [items, setItems] = useState(["30m", "1h", "24h", "7d", "30d"]);
   const [name, setName] = useState("");
   const inputRef = useRef<InputRef>(null);
+  const { data: User } = useGetIdentity<any>();
+
 
   const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -57,6 +61,78 @@ export const SalesTableView: FC<Props> = ({
       inputRef.current?.focus();
     }, 0);
   };
+
+  const { selectProps } = useSelect({
+    resource: "profiles",
+    filters: [
+      {
+        field: " role",
+        operator: "eq",
+        value: "sales",
+      },
+      {
+        field: "boss_id",
+        operator: "eq",
+        value: User?.id,
+      }],
+    optionLabel: "username",
+    optionValue: "username",
+    defaultValue: getDefaultFilter("profiles.username", filters, "in"),
+  });
+
+  const { selectProps:selectEmailProps } = useSelect({
+    resource: "profiles",
+    filters: [
+      {
+        field: " role",
+        operator: "eq",
+        value: "sales",
+      },
+      {
+        field: "boss_id",
+        operator: "eq",
+        value: User?.id,
+      }],
+    optionLabel: "email",
+    optionValue: "email",
+    defaultValue: getDefaultFilter("profiles.email", filters, "in"),
+  });
+
+  const { selectProps:selectFullNameProps } = useSelect({
+    resource: "profiles",
+    filters: [
+      {
+        field: " role",
+        operator: "eq",
+        value: "sales",
+      },
+      {
+        field: "boss_id",
+        operator: "eq",
+        value: User?.id,
+      }],
+    optionLabel: "full_name",
+    optionValue: "full_name",
+    defaultValue: getDefaultFilter("profiles.full_name", filters, "in"),
+  });
+
+  const { selectProps:selectPhnProps } = useSelect({
+    resource: "profiles",
+    filters: [
+      {
+        field: " role",
+        operator: "eq",
+        value: "sales",
+      },
+      {
+        field: "boss_id",
+        operator: "eq",
+        value: User?.id,
+      }],
+    optionLabel: "phone",
+    optionValue: "phone",
+    defaultValue: getDefaultFilter("profiles.phone", filters, "in"),
+  });
 
   return (
     <Table
@@ -79,13 +155,16 @@ export const SalesTableView: FC<Props> = ({
       <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
         dataIndex="username"
         title="Name"
-        defaultFilteredValue={getDefaultFilter("username", filters)}
         filterIcon={<SearchOutlined />}
-        filterDropdown={(props) => (
-          <FilterDropdown {...props}>
-            <Input placeholder="Search UserName" />
-          </FilterDropdown>
-        )}
+              filterDropdown={(props) => (
+                <FilterDropdown {...props} mapValue={(value) => value}>
+                  <Select
+                    style={{ minWidth: 200 }}
+                    mode="multiple"
+                    {...selectProps}
+                  />
+                </FilterDropdown>
+              )}
         render={(value) => <div>{value}</div>}
       />
       <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
@@ -93,8 +172,12 @@ export const SalesTableView: FC<Props> = ({
         title="email"
         filterIcon={<SearchOutlined />}
         filterDropdown={(props) => (
-          <FilterDropdown {...props}>
-            <Input placeholder="Search email" />
+          <FilterDropdown {...props} mapValue={(value) => value}>
+            <Select
+              style={{ minWidth: 200 }}
+              mode="multiple"
+              {...selectEmailProps}
+            />
           </FilterDropdown>
         )}
         render={(value) => <div>{value}</div>}
@@ -104,8 +187,12 @@ export const SalesTableView: FC<Props> = ({
         title="Full Name"
         filterIcon={<SearchOutlined />}
         filterDropdown={(props) => (
-          <FilterDropdown {...props}>
-            <Input placeholder="Search Full Name" />
+          <FilterDropdown {...props} mapValue={(value) => value}>
+            <Select
+              style={{ minWidth: 200 }}
+              mode="multiple"
+              {...selectFullNameProps}
+            />
           </FilterDropdown>
         )}
         render={(value) => <div>{value}</div>}
@@ -115,8 +202,12 @@ export const SalesTableView: FC<Props> = ({
         title="phone"
         filterIcon={<SearchOutlined />}
         filterDropdown={(props) => (
-          <FilterDropdown {...props}>
-            <Input placeholder="Search Phone" />
+          <FilterDropdown {...props} mapValue={(value) => value}>
+            <Select
+              style={{ minWidth: 200 }}
+              mode="multiple"
+              {...selectPhnProps}
+            />
           </FilterDropdown>
         )}
         render={(value) => <TextField value={"+91 " + value} />}

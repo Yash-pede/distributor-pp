@@ -1,14 +1,27 @@
 import { Database } from "@/utilities";
-import { Show, useTable } from "@refinedev/antd";
-import { useGetIdentity, useGo, useList } from "@refinedev/core";
-import { Button, Skeleton, Table } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+import {
+  FilterDropdown,
+  Show,
+  getDefaultSortOrder,
+  useSelect,
+  useTable,
+} from "@refinedev/antd";
+import {
+  getDefaultFilter,
+  useGetIdentity,
+  useGo,
+  useList,
+} from "@refinedev/core";
+import { Button, Select, Skeleton, Table } from "antd";
 import React from "react";
 
 export const InventoryList = () => {
   const { data: user } = useGetIdentity<any>();
   const [productWiseArrange, setProductWiseArrange] = React.useState<any>([]);
   const go = useGo();
-  const { tableProps, tableQueryResult } = useTable<
+
+  const { tableProps, tableQueryResult, filters, sorters } = useTable<
     Database["public"]["Tables"]["inventory"]["Row"]
   >({
     resource: "inventory",
@@ -62,6 +75,13 @@ export const InventoryList = () => {
     setProductWiseArrange(arrangedProducts);
   }, [isLoadingProducts, tableQueryResult]);
 
+  const { selectProps } = useSelect({
+    resource: "products",
+    optionLabel: "name",
+    optionValue: "id",
+    defaultValue: getDefaultFilter("products.name", filters, "in"),
+  });
+
   return (
     <Show
       headerButtons={
@@ -81,6 +101,16 @@ export const InventoryList = () => {
         <Table.Column
           dataIndex="productId"
           title="Product ID"
+          filterIcon={<SearchOutlined />}
+          filterDropdown={(props) => (
+            <FilterDropdown {...props} mapValue={(value) => value}>
+              <Select
+                style={{ minWidth: 200 }}
+                mode="multiple"
+                {...selectProps}
+              />
+            </FilterDropdown>
+          )}
           render={(value) => {
             if (isLoadingProducts) {
               return <Skeleton.Input style={{ width: 100 }} />;
@@ -91,7 +121,12 @@ export const InventoryList = () => {
             return product?.name;
           }}
         />
-        <Table.Column dataIndex="quantity" title="Quantity" />
+        <Table.Column
+          dataIndex="quantity"
+          title="Quantity"
+          sorter={{ multiple: 2 }}
+          defaultSortOrder={getDefaultSortOrder("quantity", sorters)}
+        />
         <Table.Column
           title="Details"
           render={() => (
