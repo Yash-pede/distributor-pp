@@ -11,6 +11,7 @@ import {
   Typography,
 } from "antd";
 import {
+  DateField,
   FilterDropdown,
   List,
   ShowButton,
@@ -60,6 +61,26 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
           order: "desc",
         },
       ],
+    },
+  });
+  const { data: profiles, isLoading: isProfileLoading } = useList<
+    Database["public"]["Tables"]["profiles"]["Row"]
+  >({
+    resource: "profiles",
+    filters: [
+      {
+        field: "id",
+        operator: "in",
+        value: tableQueryResult.data?.data
+          .filter((item) => item.sales_id)
+          .map((item) => item.sales_id),
+      },
+    ],
+    meta: {
+      fields: ["id", "username"],
+    },
+    queryOptions: {
+      enabled: !!tableQueryResult.data,
     },
   });
   const [form] = Form.useForm();
@@ -145,6 +166,30 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
           }}
         />
         <Table.Column
+          sorter={{ multiple: 2 }}
+          defaultSortOrder={getDefaultSortOrder("sales_id", sorter)}
+          dataIndex="sales_id"
+          title="sales"
+          render={(value) => {
+            if (isProfileLoading) return <Skeleton.Button />;
+            return (
+              <Text>
+                {
+                  profiles?.data?.find((profile) => profile.id === value)
+                    ?.username
+                }
+              </Text>
+            );
+          }}
+        />
+        <Table.Column
+          sorter={{ multiple: 2 }}
+          defaultSortOrder={getDefaultSortOrder("created_at", sorter)}
+          dataIndex="created_at"
+          title="Created At"
+          render={(value) => <DateField value={value} />}
+        />
+        <Table.Column
           title="Action"
           render={(row) => (
             <div style={{ display: "flex", gap: "10px" }}>
@@ -156,7 +201,7 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
               >
                 Update
               </Button>
-              <ShowButton recordItemId={row.id}  />
+              <ShowButton recordItemId={row.id} />
             </div>
           )}
         />
