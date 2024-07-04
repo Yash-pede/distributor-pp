@@ -30,6 +30,21 @@ export const getActionColor = (action: string): TagProps["color"] => {
   }
 };
 
+export const getTransferColor = (action: string): TagProps["color"] => {
+  switch (action) {
+    case "Requested":
+      return "orange";
+    case "Credit":
+      return "green";
+    case "Debit":
+      return "red";
+    case "Approved":
+      return "green";
+    default:
+      return "default";
+  }
+};
+
 export const banUser = async (userId: string, banDuration: string) => {
   const result = await supabaseClient.auth.admin.updateUserById(
     userId,

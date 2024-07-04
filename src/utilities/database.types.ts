@@ -153,6 +153,29 @@ export type Database = {
           },
         ]
       }
+      funds: {
+        Row: {
+          id: string
+          total: number
+        }
+        Insert: {
+          id?: string
+          total: number
+        }
+        Update: {
+          id?: string
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funds_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory: {
         Row: {
           batch_id: string
@@ -374,6 +397,61 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transfers: {
+        Row: {
+          amount: number
+          created_at: string
+          customer_id: number | null
+          description: string | null
+          from_user_id: string
+          id: number
+          status: Database["public"]["Enums"]["order_status"]
+          to_user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          customer_id?: number | null
+          description?: string | null
+          from_user_id: string
+          id?: number
+          status: Database["public"]["Enums"]["order_status"]
+          to_user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          customer_id?: number | null
+          description?: string | null
+          from_user_id?: string
+          id?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          to_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funds_to_user_id_fkey"
+            columns: ["to_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transfers_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transfers_to_user_id_fkey"
+            columns: ["to_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]

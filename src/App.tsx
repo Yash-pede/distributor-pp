@@ -34,6 +34,7 @@ import { InventoryDetails, InventoryList } from "./routes/inventory";
 import { ChallanCreate, ChallanList, ChallanShow } from "./routes/challan";
 import { CustomersCreate, CustomersList, CustomersShow } from "./routes/clients/customers";
 import { ChallanPdf } from "./routes/challan/components/challanPdf";
+import { FundsCreate, FundsList } from "./routes/funds";
 
 function App() {
   return (
@@ -81,13 +82,17 @@ function App() {
                       </Route>
 
                       <Route path="/products">
-                        <Route index element={<ProductsList />} />
+                        <Route index element={<ProductsList />    } />
                         <Route path=":id" element={<ProductsEdit />} />
                       </Route>
                       <Route path="/orders">
                         <Route index element={<OrdersList />} />
                         <Route path=":id" element={<OrdersShow />} />
                       </Route>
+                      <Route path="funds">
+                      <Route index element={<FundsList />} />
+                      <Route path="create" element={<FundsCreate />} />
+                    </Route>
                       <Route path="/inventory">
                         <Route index element={<InventoryList />} />
                         <Route path="details" element={<InventoryDetails />} />
