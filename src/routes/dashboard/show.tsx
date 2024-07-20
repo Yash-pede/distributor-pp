@@ -4,7 +4,7 @@ import React from 'react'
 const DashboardHome = () => {
   const {data} = useGetIdentity()
   return (
-    <div>DashboardHome</div>
+    <div>{data?.banned_until}</div>
   )
 }
 

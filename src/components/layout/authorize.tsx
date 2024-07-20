@@ -5,6 +5,7 @@ import { Unauthorized } from "../unauthorized/unauthorized";
 import { FullScreenLoading } from "../fullscreen-loading";
 
 export const AuthorizeUserRole = () => {
+  
   const {
     data: User,
     isLoading: isUserLoading,
@@ -22,8 +23,8 @@ export const AuthorizeUserRole = () => {
     },
   });
 
-  if (isUserLoading || isProfileLoading || isUserError || isProfileError)
+if (isUserLoading || isProfileLoading || isUserError || isProfileError)   
     return <FullScreenLoading />;
 
-  return profile?.data.role === "distributor" ? <Outlet /> : <Unauthorized />;
+  return profile?.data.role === "distributor" && new Date(User.banned_until) < new Date() ? <Outlet /> : <Unauthorized />;
 };
