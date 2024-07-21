@@ -103,19 +103,19 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
   };
   return (
     <List canCreate>
-      <Flex justify="space-between" align="center" gap={2}>
-        <Typography.Paragraph>
+    <Flex justify="space-between" align="center" gap={2}>
+        <Text size="xl" style={{marginBottom:10}}>
           Total:{" "}
           {tableQueryResult.data?.data.reduce((a, b) => a + b.total_amt, 0)}
-        </Typography.Paragraph>
-        <Typography.Paragraph>
+        </Text>
+        <Text size="xl" style={{marginBottom:10}}>
           Pending:{" "}
           {tableQueryResult.data?.data.reduce((a, b) => a + b.pending_amt, 0)}
-        </Typography.Paragraph>
-        <Typography.Paragraph>
+        </Text>
+        <Text size="xl" style={{marginBottom:10}}>
           Received:{" "}
           {tableQueryResult.data?.data.reduce((a, b) => a + b.received_amt, 0)}
-        </Typography.Paragraph>
+        </Text>
       </Flex>
       <Table {...tableProps} rowKey="id" bordered>
         <Table.Column
