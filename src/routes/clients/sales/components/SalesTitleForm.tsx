@@ -39,8 +39,9 @@ export const SalesTitleForm = ({
         >
           Edit Details
         </Button>
-        <Button> Edit Credentials</Button>
+        <Button onClick={() => go({ to: `/administration/settings/user-credentials/${salesDetails ?.id}` })}> Edit Credentials</Button>
       </Space>
     </Flex>
   );
 };
+  

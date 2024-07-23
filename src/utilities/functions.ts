@@ -45,14 +45,6 @@ export const getTransferColor = (action: string): TagProps["color"] => {
   }
 };
 
-export const banUser = async (userId: string, banDuration: string) => {
-  const result = await supabaseClient.auth.admin.updateUserById(
-    userId,
-    { ban_duration: banDuration }
-  );
-  return result;
-};
-
 export function isValidUUID(uuid: string) {
   return validate(uuid);
 }

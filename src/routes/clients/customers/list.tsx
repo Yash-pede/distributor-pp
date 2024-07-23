@@ -1,14 +1,26 @@
 import { Database } from "@/utilities";
 import { SearchOutlined } from "@ant-design/icons";
-import { CreateButton, EditButton, ExportButton, FilterDropdown, List, SaveButton, ShowButton, TextField, getDefaultFilter, useEditableTable, useSelect } from "@refinedev/antd";
-import { useExport, useGetIdentity, useList } from "@refinedev/core";
+import {
+  CreateButton,
+  EditButton,
+  ExportButton,
+  FilterDropdown,
+  List,
+  SaveButton,
+  ShowButton,
+  TextField,
+  getDefaultFilter,
+  useEditableTable,
+  useSelect,
+} from "@refinedev/antd";
+import { useExport, useGetIdentity, useGo, useList } from "@refinedev/core";
 import { Button, Flex, Form, Input, Select, Space, Table } from "antd";
 import dayjs from "dayjs";
 import React from "react";
 
 export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
   const { data: User } = useGetIdentity<any>();
-
+  const go = useGo(); 
   const {
     tableProps,
     formProps,
@@ -336,7 +348,30 @@ export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
                         hideText
                         size="small"
                       />
-                      <ShowButton size="small" recordItemId={record.id} />
+                      <ShowButton
+                        size="small"
+                        hideText
+                        recordItemId={record.id}
+                      />
+                      <Button
+                        type="primary"
+                        onClick={() =>
+                          go({
+                            to: `/challan`,
+                            query: {
+                              filters: [
+                                {
+                                  field: "customer_id",
+                                  operator: "eq",
+                                  value: JSON.parse(JSON.stringify(record)).id,
+                                },
+                              ],
+                            },
+                          })
+                        }
+                      >
+                        Challan's
+                      </Button>
                     </Flex>
                   );
                 }}

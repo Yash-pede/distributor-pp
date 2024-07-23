@@ -94,7 +94,7 @@ function App() {
                       <Route path="create" element={<FundsCreate />} />
                     </Route>
                       <Route path="/inventory">
-                        <Route index element={<InventoryList />} />
+                        <Route index element={<InventoryList />} /> 
                         <Route path="details" element={<InventoryDetails />} />
                       </Route>
                       <Route path="/challan">
@@ -119,12 +119,23 @@ function App() {
                       </Route>
 
                       <Route path="/administration">
+                      <Route path="settings">
+                        <Route index element={<>Settings</>} />
+                        <Route
+                          path="user-credentials/:id"
+                          element={
+                            <>
+                              Editing the users details is temporaryly disabled
+                            </>
+                          }
+                        />
+                      </Route>
                         <Route path="audit-log">
                           <Route index element={<AuditLogList />} />
                         </Route>
                       </Route>
                     </Route>
-
+                          
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>
                   <Route

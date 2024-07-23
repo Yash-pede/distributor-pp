@@ -33,7 +33,7 @@ type Props = {
 };
 let index = 0;
 
-export const SalesTableView: FC<Props> = ({
+export const  SalesTableView: FC<Props> = ({
   tableProps,
   filters,
   tableQueryResult,
@@ -119,36 +119,6 @@ export const SalesTableView: FC<Props> = ({
               size="small"
               recordItemId={value}
             />
-
-            <Select
-              style={{ width: 100 }}
-              placeholder="BAN"
-              dropdownRender={(menu) => (
-                <>
-                  {menu}
-                  <Divider style={{ margin: "8px 0" }} />
-                  <Space style={{ padding: "0 8px 4px" }}>
-                    <Input
-                      placeholder="xh"
-                      ref={inputRef}
-                      value={name}
-                      onChange={onNameChange}
-                      onKeyDown={(e) => e.stopPropagation()}
-                    />
-                    <Button
-                      type="text"
-                      icon={<PlusOutlined />}
-                      onClick={addItem}
-                    >
-                      Add item
-                    </Button>
-                  </Space>
-                </>
-              )}
-              size="small"
-              options={items.map((item) => ({ label: item, value: item }))}
-            />
-            {/* <DeleteButton hideText size="small" recordItemId={value} /> */}
           </Space>
         )}
       />

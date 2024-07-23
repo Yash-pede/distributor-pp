@@ -6,6 +6,7 @@ import {
   Input,
   InputNumber,
   Modal,
+  Select,
   Skeleton,
   Table,
   Typography,
@@ -17,6 +18,7 @@ import {
   ShowButton,
   getDefaultSortOrder,
   useModal,
+  useSelect,
   useTable,
 } from "@refinedev/antd";
 import { useGetIdentity, useList, useUpdate } from "@refinedev/core";
@@ -101,18 +103,38 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
     form.resetFields();
     setIdToUpdateReceived(null);
   };
+  const { selectProps: customerSelectProps } = useSelect<
+    Database["public"]["Tables"]["customers"]["Row"]
+  >({
+    resource: "customers",
+    optionLabel: "full_name",
+    optionValue: "id",
+    filters: [
+      {
+        field: "id",
+        operator: "in",
+        value: tableQueryResult.data?.data
+          .filter((item) => item.customer_id)
+          .map((item) => item.customer_id),
+      },
+    ],
+    queryOptions: {
+      enabled: !!tableQueryResult.data,
+    },
+  });
+  
   return (
     <List canCreate>
-    <Flex justify="space-between" align="center" gap={2}>
-        <Text size="xl" style={{marginBottom:10}}>
+      <Flex justify="space-between" align="center" gap={2}>
+        <Text size="xl" style={{ marginBottom: 10 }}>
           Total:{" "}
           {tableQueryResult.data?.data.reduce((a, b) => a + b.total_amt, 0)}
         </Text>
-        <Text size="xl" style={{marginBottom:10}}>
+        <Text size="xl" style={{ marginBottom: 10 }}>
           Pending:{" "}
           {tableQueryResult.data?.data.reduce((a, b) => a + b.pending_amt, 0)}
         </Text>
-        <Text size="xl" style={{marginBottom:10}}>
+        <Text size="xl" style={{ marginBottom: 10 }}>
           Received:{" "}
           {tableQueryResult.data?.data.reduce((a, b) => a + b.received_amt, 0)}
         </Text>
@@ -153,6 +175,12 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
           defaultSortOrder={getDefaultSortOrder("customer_id", sorter)}
           dataIndex="customer_id"
           title="customer"
+          filterIcon={<SearchOutlined />}
+          filterDropdown={(props) => (
+            <FilterDropdown {...props} mapValue={(value) => value}>
+              <Select {...customerSelectProps} style={{ width: 200 }} />
+            </FilterDropdown>
+          )}
           render={(value) => {
             if (isLoadingCustomers) return <Skeleton.Button />;
             return (
