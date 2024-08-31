@@ -1,4 +1,4 @@
-import { type FC, useMemo } from "react";
+import { useMemo } from "react";
 
 import { DateField, useTable } from "@refinedev/antd";
 
@@ -25,21 +25,16 @@ export const CustomerTable = ({
     setPageSize,
     setFilters,
   } = useTable<
-    Database["public"]["Tables"]["profiles"]["Row"],
+    Database["public"]["Tables"]["customers"]["Row"],
     HttpError,
     { name: string }
   >({
-    resource: "profiles",
+    resource: "customers",
     filters: {
       mode: "server",
       permanent: [
         {
-          field: "role",
-          operator: "eq",
-          value: "customer",
-        },
-        {
-          field: "boss_id",
+          field: "sales_id",
           operator: "eq",
           value: salesDetails.id,
         },
