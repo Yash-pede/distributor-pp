@@ -69,26 +69,6 @@ export const OrdersShow = () => {
     <Show canDelete={false} canEdit={false}>
       <Flex justify="space-between">
         <h2>Order Id: {orderId}</h2>
-        <Select
-          size="large"
-          title="Order status"
-          defaultValue={
-            tableProps.loading
-              ? order.data?.data[0].status
-              : order.data?.data[0].status
-          }
-          style={{ width: "10rem", pointerEvents: "none" }}
-        >
-          <Select.Option value={OrderStatus.Pending}>Pending</Select.Option>
-          <Select.Option value={OrderStatus.Defected}>Defcted</Select.Option>
-          <Select.Option value={OrderStatus.Fulfilled}>
-            Fullfilled
-          </Select.Option>
-          <Select.Option value={OrderStatus.InProcess}>
-            In Process
-          </Select.Option>
-          <Select.Option value={OrderStatus.Cancelled}>Cancelled</Select.Option>
-        </Select>
       </Flex>
       <Table
         {...tableProps}

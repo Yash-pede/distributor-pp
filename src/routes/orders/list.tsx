@@ -39,6 +39,14 @@ export const OrdersList = () => {
         },
       ];
     },
+    sorters: {
+      initial: [
+        {
+          field: "id",
+          order: "desc",
+        }
+      ]
+    },
     pagination: {
       pageSize: 12,
     },
