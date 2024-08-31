@@ -35,6 +35,7 @@ import { ChallanCreate, ChallanList, ChallanShow } from "./routes/challan";
 import { CustomersCreate, CustomersList, CustomersShow } from "./routes/clients/customers";
 import { ChallanPdf } from "./routes/challan/components/challanPdf";
 import { FundsCreate, FundsList } from "./routes/funds";
+import { TargetCreate } from "./components/targets/create";
 
 function App() {
   return (
@@ -130,6 +131,9 @@ function App() {
                           }
                         />
                       </Route>
+                      <Route path="targets">
+                          <Route path="create/:id" element={<TargetCreate />} />
+                        </Route>
                         <Route path="audit-log">
                           <Route index element={<AuditLogList />} />
                         </Route>

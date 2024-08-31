@@ -2,14 +2,9 @@ import { Text } from "@/components";
 import { Database } from "@/utilities";
 import { ShopOutlined } from "@ant-design/icons";
 import { DateField, useModal } from "@refinedev/antd";
-import { useGo, useOne } from "@refinedev/core";
-import {
-  Button,
-  Card,
-  Flex,
-  Skeleton,
-  Space,
-} from "antd";
+import { useGo, useList, useOne } from "@refinedev/core";
+import { Button, Card, Flex, Skeleton, Space } from "antd";
+import dayjs from "dayjs";
 import React from "react";
 
 type Props = {
@@ -33,6 +28,29 @@ export const UserInfoForm = (props: Props) => {
     queryOptions: {
       enabled: !!props.userDetails.boss_id,
     },
+  });
+
+  const { data: targets, isLoading: targetsLoading } = useList<
+    Database["public"]["Tables"]["targets"]["Row"]
+  >({
+    resource: "targets",
+    filters: [
+      {
+        field: "user_id",
+        operator: "eq",
+        value: props.userDetails.id,
+      },
+      {
+        field: "month",
+        operator: "eq",
+        value: dayjs().month(),
+      },
+      {
+        field: "year",
+        operator: "eq",
+        value: dayjs().year(),
+      },
+    ],
   });
 
   const { data: fundDetails, isLoading: fundLoading } = useOne<
@@ -91,6 +109,47 @@ export const UserInfoForm = (props: Props) => {
           <Space size="middle">
             <Text strong>User Name: </Text>
             <Text>{props.userDetails.username}</Text>
+          </Space>
+        </Card.Grid>
+        <Card.Grid style={gridStyle}>
+          <Space size="middle">
+            <Text strong>Target: </Text>
+            <Text>
+              {targetsLoading || !targets?.data[0]?.target ? (
+                <Button
+                  type="dashed"
+                  onClick={() =>
+                    go({
+                      to: `/administration/targets/create/${props.userDetails.id}`,
+                    })
+                  }
+                >
+                  Set target{" "}
+                </Button>
+              ) : (
+                <Space size="middle">
+                  <Text size="md">{targets?.data[0]?.total}</Text>
+                  <Text>/</Text>
+                  <Text size="md">{targets?.data[0]?.target}</Text>
+                  <Text>=</Text>
+                  <Text
+                    size="md"
+                    color={
+                      (targets?.data[0]?.total / targets?.data[0]?.target) *
+                        100 >
+                      100
+                        ? "green"
+                        : "red"
+                    }
+                  >
+                    {(
+                      (targets?.data[0]?.total / targets?.data[0]?.target) *
+                      100
+                    ).toFixed(2)}
+                  </Text>
+                </Space>
+              )}
+            </Text>
           </Space>
         </Card.Grid>
         <Card.Grid style={gridStyle}>

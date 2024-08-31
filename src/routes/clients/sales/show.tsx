@@ -8,7 +8,7 @@ import { Database } from "@/utilities";
 import { UserActivitesTable } from "@/components/UserActivitesTable";
 import { UserInfoForm } from "@/components/infoForm";
 
-export const SalesShow = ({
+export const    SalesShow = ({
   children,
 }: {
   children?: React.ReactNode;
