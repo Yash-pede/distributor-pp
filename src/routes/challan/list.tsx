@@ -65,6 +65,20 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
       ],
     },
   });
+  const { data: ChallansAmt, isFetching: isFetchingChallansAmt } = useList<
+  Database["public"]["Tables"]["challan"]["Row"]
+>({
+  resource: "challan",
+  pagination: {
+    current: 1,
+    pageSize: 1000,
+  },
+  queryOptions: {
+    meta: {
+      select: "id, total_amt, received_amt, pending_amt",
+    },
+  },
+});
   const { data: profiles, isLoading: isProfileLoading } = useList<
     Database["public"]["Tables"]["profiles"]["Row"]
   >({
@@ -128,15 +142,15 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
       <Flex justify="space-between" align="center" gap={2}>
         <Text size="xl" style={{ marginBottom: 10 }}>
           Total:{" "}
-          {tableQueryResult.data?.data.reduce((a, b) => a + b.total_amt, 0)}
+          {ChallansAmt?.data.reduce((a, b) => a + b.total_amt, 0)}
         </Text>
         <Text size="xl" style={{ marginBottom: 10 }}>
           Pending:{" "}
-          {tableQueryResult.data?.data.reduce((a, b) => a + b.pending_amt, 0)}
+          {ChallansAmt?.data.reduce((a, b) => a + b.pending_amt, 0)}
         </Text>
         <Text size="xl" style={{ marginBottom: 10 }}>
           Received:{" "}
-          {tableQueryResult.data?.data.reduce((a, b) => a + b.received_amt, 0)}
+          {ChallansAmt?.data.reduce((a, b) => a + b.received_amt, 0)}
         </Text>
       </Flex>
       <Table {...tableProps} rowKey="id" bordered>
