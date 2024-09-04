@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Button,
   Flex,
@@ -30,6 +30,7 @@ import { Text } from "@/components";
 export const ChallanList = ({ sales }: { sales?: boolean }) => {
   const [IdToUpdateReceived, setIdToUpdateReceived] = React.useState<any>(null);
   const { data: User } = useGetIdentity<any>();
+  const [userFilters, setUserFilters] = React.useState<any>(null);
 
   const { data: Customers, isLoading: isLoadingCustomers } = useList<
     Database["public"]["Tables"]["customers"]["Row"]
@@ -44,7 +45,7 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
     ],
   });
 
-  const { tableProps, tableQueryResult, sorter } = useTable<
+  const { tableProps, tableQueryResult, sorter, filters } = useTable<
     Database["public"]["Tables"]["challan"]["Row"]
   >({
     filters: {
@@ -64,21 +65,50 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
         },
       ],
     },
-  });
-  const { data: ChallansAmt, isFetching: isFetchingChallansAmt } = useList<
-  Database["public"]["Tables"]["challan"]["Row"]
->({
-  resource: "challan",
-  pagination: {
-    current: 1,
-    pageSize: 1000,
-  },
-  queryOptions: {
-    meta: {
-      select: "id, total_amt, received_amt, pending_amt",
+    queryOptions: {
+      enabled: !!User?.id && !isLoadingCustomers,
     },
-  },
-});
+  });
+  useEffect(() => {
+    if (tableQueryResult.data?.data) {
+      filters.map((item: any) => {
+        if (
+          (item.field === "customer_id" ||
+            item.field === "sales_id" ||
+            item.field === "distributor_id") &&
+          item.operator === "eq"
+        ) {
+          setUserFilters({
+            userType: item.field,
+            userId: item.value,
+          });
+        }
+      });
+    }
+  }, [tableQueryResult.data?.data]);
+  const { data: ChallansAmt, isFetching: isFetchingChallansAmt } = useList<
+    Database["public"]["Tables"]["challan"]["Row"]
+  >({
+    resource: "challan",
+    pagination: {
+      current: 1,
+      pageSize: 1000,
+    },
+    filters: userFilters
+      ? [
+          {
+            field: userFilters.userType,
+            operator: "eq",
+            value: userFilters.userId,
+          },
+        ]
+      : [],
+    queryOptions: {
+      meta: {
+        select: "id, total_amt, received_amt, pending_amt",
+      },
+    },
+  });
   const { data: profiles, isLoading: isProfileLoading } = useList<
     Database["public"]["Tables"]["profiles"]["Row"]
   >({
@@ -136,21 +166,18 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
       enabled: !!tableQueryResult.data,
     },
   });
-  
+
   return (
     <List canCreate>
       <Flex justify="space-between" align="center" gap={2}>
         <Text size="xl" style={{ marginBottom: 10 }}>
-          Total:{" "}
-          {ChallansAmt?.data.reduce((a, b) => a + b.total_amt, 0)}
+          Total: {ChallansAmt?.data.reduce((a, b) => a + b.total_amt, 0)}
         </Text>
         <Text size="xl" style={{ marginBottom: 10 }}>
-          Pending:{" "}
-          {ChallansAmt?.data.reduce((a, b) => a + b.pending_amt, 0)}
+          Pending: {ChallansAmt?.data.reduce((a, b) => a + b.pending_amt, 0)}
         </Text>
         <Text size="xl" style={{ marginBottom: 10 }}>
-          Received:{" "}
-          {ChallansAmt?.data.reduce((a, b) => a + b.received_amt, 0)}
+          Received: {ChallansAmt?.data.reduce((a, b) => a + b.received_amt, 0)}
         </Text>
       </Flex>
       <Table {...tableProps} rowKey="id" bordered>
