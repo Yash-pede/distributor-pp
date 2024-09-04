@@ -1,14 +1,14 @@
 import { Database } from "@/utilities";
-import { Show, useTable } from "@refinedev/antd";
+import { DateField, FilterDropdown, getDefaultSortOrder, Show, useSelect, useTable } from "@refinedev/antd";
 import { useGetIdentity, useGo, useList } from "@refinedev/core";
-import { Button, Skeleton, Table } from "antd";
-import React from "react";
+import { Button, Select, Skeleton, Table } from "antd";
+import React, { useEffect } from "react";
 
 export const InventoryList = () => {
   const { data: user } = useGetIdentity<any>();
   const [productWiseArrange, setProductWiseArrange] = React.useState<any>([]);
   const go = useGo();
-  const { tableProps, tableQueryResult } = useTable<
+  const { tableProps, tableQueryResult,sorters } = useTable<
     Database["public"]["Tables"]["inventory"]["Row"]
   >({
     resource: "inventory",
@@ -21,6 +21,27 @@ export const InventoryList = () => {
           value: user?.id,
         },
       ],
+    },
+  });
+  const { data: BatchDetails, isLoading: isLoadingBatch } = useList<
+    Database["public"]["Tables"]["stocks"]["Row"]
+  >({
+    resource: "stocks",
+    pagination: {
+      current: 1,
+      pageSize: 1000,
+    },
+    filters: [
+      {
+        field: "id",
+        operator: "in",
+        value: tableQueryResult.data?.data.map((item) => item.batch_id),
+      },
+    ],
+    queryOptions: {
+      meta: {
+        select: "id, expiry_date",
+      },
     },
   });
 
@@ -40,18 +61,49 @@ export const InventoryList = () => {
     },
   });
 
-  React.useEffect(() => {
-    const productWiseData: { [productId: string]: any } = {};
+  const { selectProps: productSelectProps } = useSelect({
+    resource: "products",
+    optionLabel: "name",
+    optionValue: "id",
+    filters: [
+      {
+        field: "id",
+        operator: "in",
+        value: tableQueryResult.data?.data.map((item) => item.product_id),
+      },
+    ],
+    defaultValue: tableQueryResult.data?.data.map((item) => item.product_id),
+  });
+
+  useEffect(() => {
+    const productWiseData: {
+      [productId: string]: {
+        productId: number;
+        batches: { batchId: string; quantity: number }[];
+        quantity: number;
+      };
+    } = {};
 
     tableQueryResult?.data?.data.forEach((item) => {
       const productId = item.product_id;
+      const batchId = item.batch_id;
       const quantity = item.quantity;
 
       if (productId in productWiseData) {
+        productWiseData[productId].batches.push({
+          batchId,
+          quantity,
+        });
         productWiseData[productId].quantity += quantity;
       } else {
         productWiseData[productId] = {
           productId,
+          batches: [
+            {
+              batchId,
+              quantity,
+            },
+          ],
           quantity,
         };
       }
@@ -61,7 +113,44 @@ export const InventoryList = () => {
 
     setProductWiseArrange(arrangedProducts);
   }, [isLoadingProducts, tableQueryResult]);
-
+  const expandedRowRender = (record: any) => {
+    const columns = [
+      {
+        title: "Batch ID",
+        dataIndex: "batchId",
+        key: "batchId",
+      },
+      {
+        title: "Quantity",
+        dataIndex: "quantity",
+        key: "quantity",
+      },
+      {
+        title: "Expiry date",
+        dataIndex: "batchId",
+        key: "batchId",
+        render: (value: any) => {
+          return (
+            <DateField
+              value={
+                BatchDetails?.data?.find((item) => item.id === value)
+                  ?.expiry_date
+              }
+            />
+          );
+        },
+      },
+    ];
+    return (
+      <Table
+        columns={columns}
+        dataSource={record.batches}
+        pagination={false}
+        bordered
+        showHeader
+      />
+    );
+  };
   return (
     <Show
       headerButtons={
@@ -76,11 +165,26 @@ export const InventoryList = () => {
         </Button>
       }
     >
-      <Table {...tableProps} dataSource={productWiseArrange} rowKey={"id"}>
+      <Table
+        {...tableProps}
+        rowKey={"productId"}
+        dataSource={productWiseArrange}
+        expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
+      >
         <Table.Column dataIndex="id" title="ID" hidden />
         <Table.Column
           dataIndex="productId"
           title="Product ID"
+          filterDropdown={(props) => (
+            <FilterDropdown {...props}>
+              <Select
+                mode="multiple"
+                style={{ minWidth: 200 }}
+                placeholder="Select Products"
+                {...productSelectProps}
+              />
+            </FilterDropdown>
+          )}
           render={(value) => {
             if (isLoadingProducts) {
               return <Skeleton.Input style={{ width: 100 }} />;
@@ -91,21 +195,18 @@ export const InventoryList = () => {
             return product?.name;
           }}
         />
-        <Table.Column dataIndex="quantity" title="Quantity" />
         <Table.Column
-          title="Details"
-          render={() => (
-            <Button
-              type="link"
-              onClick={() =>
-                go({
-                  to: { action: "show", resource: "inventory", id: "details" },
-                })
-              }
-            >
-              Details
-            </Button>
-          )}
+          dataIndex="quantity"
+          title="Quantity"
+          sorter={{ multiple: 2 }}
+          defaultSortOrder={getDefaultSortOrder("id", sorters)}
+        />
+        <Table.Column
+          dataIndex="created_at"
+          title="Created"
+          sorter={{ multiple: 2 }}
+          defaultSortOrder={getDefaultSortOrder("id", sorters)}
+          render={(value) => <DateField value={value} />}
         />
       </Table>
     </Show>
