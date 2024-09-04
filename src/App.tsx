@@ -21,7 +21,6 @@ import { ColorModeContextProvider } from "./contexts/color-mode";
 import { supabaseClient } from "./utilities";
 import { resources } from "./config";
 import { Layout } from "./components/layout";
-import DashboardHome from "./routes/dashboard/show";
 import { ProductsList, ProductsEdit } from "./routes/products";
 import { auditLogProvider } from "./utilities/providers/auditlogProvider";
 
@@ -36,6 +35,7 @@ import { CustomersCreate, CustomersList, CustomersShow } from "./routes/clients/
 import { ChallanPdf } from "./routes/challan/components/challanPdf";
 import { FundsCreate, FundsList } from "./routes/funds";
 import { TargetCreate } from "./components/targets/create";
+import DashboardHome from "./routes/dashboard/show";
 
 function App() {
   return (

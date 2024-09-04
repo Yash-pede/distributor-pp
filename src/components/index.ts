@@ -5,3 +5,4 @@ export * from "./text";
 export * from "./pagination-total";
 export * from "./fullscreen-loading";
 export * from "./unauthorized/unauthorized";
+export * from "./charts/index"
