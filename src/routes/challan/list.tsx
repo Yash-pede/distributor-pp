@@ -101,8 +101,19 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
             operator: "eq",
             value: userFilters.userId,
           },
+          {
+            field: "distributor_id",
+            operator: "eq",
+            value: User?.id,
+          },
         ]
-      : [],
+      : [
+          {
+            field: "distributor_id",
+            operator: "eq",
+            value: User?.id,
+          },
+        ],
     queryOptions: {
       meta: {
         select: "id, total_amt, received_amt, pending_amt",
