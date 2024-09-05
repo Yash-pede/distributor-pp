@@ -1,8 +1,9 @@
 import React from "react";
 import { SalesList } from "./list";
 import { Drawer, Form, Input, Select, Space } from "antd";
-import { Database, supabaseClient } from "@/utilities";
+import { Database, supabaseServiceRoleClient } from "@/utilities";
 import {
+  useGetIdentity,
   useGo,
   useNavigation,
   useNotification,
@@ -17,7 +18,7 @@ export const SalesCreate = () => {
   const { listUrl } = useNavigation();
   const go = useGo();
   const { status, mutate, isSuccess } = useUpdate();
-
+  const { data: User } = useGetIdentity<any>();
   const setUserRole = async (
     userId: string,
     userRole: Database["public"]["Enums"]["ROLES"]
@@ -71,7 +72,7 @@ export const SalesCreate = () => {
         undoableTimeout: 2000,
       });
     const { data, error } =
-      await supabaseClient.auth.admin.createUser({
+      await supabaseServiceRoleClient.auth.admin.createUser({
         email: email,
         password: password,
         email_confirm: true,
@@ -117,9 +118,9 @@ export const SalesCreate = () => {
     resource: "profiles",
     filters: [
       {
-        field: "role",
+        field: "id",
         operator: "eq",
-        value: "distributor",
+        value: User?.id,
       },
     ],
     optionLabel: "username",
@@ -198,8 +199,8 @@ export const SalesCreate = () => {
                 options={[{ value: "sales", label: "Sales" }]}
               />
             </Form.Item>
-            <Form.Item label="Distributor" name={"boss_id"} required>
-              <Select options={options} placeholder="Select Distributor" />
+            <Form.Item label="Distributor" name={"boss_id"} required initialValue={User?.id}>
+              <Select options={options} placeholder="Select Distributor" disabled defaultValue={User?.id}/>
             </Form.Item>
             <Form.Item
               label="Password"
