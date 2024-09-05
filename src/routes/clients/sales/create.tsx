@@ -39,19 +39,20 @@ export const SalesCreate = () => {
       },
     });
 
-    if (status === "success" && isSuccess) {
+    if (isSuccess) {
       close && close("assign-user");
-    } else {
-      close && close("assign-user");
-      open &&
-        open({
-          key: "assign-user",
-          type: "error",
-          message: "Failed to set user role",
-          description: "Failed to set user role",
-        });
-      console.error("Failed to set user role");
-    }
+    } 
+    // else {
+    //   close && close("assign-user");
+    //   open &&
+    //     open({
+    //       key: "assign-user",
+    //       type: "error",
+    //       message: "Failed to set user role",
+    //       description: "Failed to set user role",
+    //     });
+    //   console.error("Failed to set user role");
+    // }
   };
 
   const createUser = async (

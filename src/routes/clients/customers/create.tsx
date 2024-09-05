@@ -98,7 +98,7 @@ export const CustomersCreate = () => {
               label="Email"
               name={"email"}
               rules={[
-                { required: true, message: "Invalid Email", type: "email" },
+                { required: false, message: "Invalid Email", type: "email" },
               ]}
             >
               <Input placeholder="Email" type="email" />
