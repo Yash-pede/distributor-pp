@@ -26,5 +26,5 @@ export const AuthorizeUserRole = () => {
 if (isUserLoading || isProfileLoading || isUserError || isProfileError)   
     return <FullScreenLoading />;
 
-  return profile?.data.role === "distributor" && new Date(User.banned_until) < new Date() ? <Outlet /> : <Unauthorized />;
+  return profile?.data.role === "distributor" && (new Date(User.banned_until) < new Date() || User?.banned_until === undefined) ? <Outlet /> : <Unauthorized />;
 };
