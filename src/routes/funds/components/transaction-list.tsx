@@ -33,6 +33,14 @@ export const TransactionList = (props: Props) => {
         },
       ],
     },
+    sorters: {
+      initial: [
+        {
+          field: "created_at",
+          order: "desc",
+        },
+      ]
+    },
     queryOptions: {
       enabled: !!props.userId,
     },
@@ -93,13 +101,13 @@ export const TransactionList = (props: Props) => {
         {
           title: "Status",
           dataIndex: "status",
-          render: (value) => <Tag color={getTransferColor(value)                }>{value}</Tag>,
+          render: (value) => <Tag color={getTransferColor(value)}>{value}</Tag>,
         },
 
         {
           title: "Date",
           dataIndex: "created_at",
-          render: (value) => <DateField value={value} />,
+          render: (value) => <DateField value={value} format="DD/MM/YYYY" />,
         },
       ]}
     />
