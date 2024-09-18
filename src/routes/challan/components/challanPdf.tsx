@@ -226,7 +226,18 @@ export const ChallanPdf = () => {
           </View>
           <View style={styles.subtotalTable}>
             <View style={styles.subtotalTableRow}>
-              <Text style={styles.subtotalTableCol}>TOTAL:</Text>
+              <Text
+                style={[
+                  styles.subtotalTableCol,
+                  {
+                    backgroundColor: "#a01c9a",
+                    textAlign: "center",
+                    color: "#ffff",
+                  },
+                ]}
+              >
+                TOTAL:
+              </Text>
               <Text style={styles.subtotalTableCol}>
                 {totalAmount?.toFixed(2)}
               </Text>
@@ -344,8 +355,9 @@ const styles = StyleSheet.create({
   tableHeader: {
     display: "flex",
     flexDirection: "row",
-    backgroundColor: "#e5e5e5",
+    backgroundColor: "#a01c9a",
     textAlign: "center",
+    color: "#ffff",
   },
   tableHeaderItem: {
     flex: 1,
