@@ -39,7 +39,7 @@ export const getTransferColor = (action: string): TagProps["color"] => {
     case "Debit":
       return "red";
     case "Approved":
-      return "green";
+      return "pink";
     default:
       return "default";
   }

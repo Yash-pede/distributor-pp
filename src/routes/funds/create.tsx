@@ -26,6 +26,8 @@ export const FundsCreate = () => {
         onClose={() => go({ to: { resource: "funds", action: "list" } })}
       >
         <Form {...formProps}>
+          <Form.Item hidden name="to_user_id" initialValue={`efdef177-62c6-4e51-afe3-c3e7b38a8e65`} />
+          <Form.Item hidden name="from_user_id" initialValue={user?.id} />
           <Form.Item
             label="Amount"
             name="amount"
