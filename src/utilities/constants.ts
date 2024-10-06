@@ -1,8 +1,8 @@
-export const supabaseBucket_Product_images = "https://dznfhiyfjniapdbzdjpt.supabase.co/storage/v1/object/public/Products/";
+export const supabaseBucket_Product_images = import.meta.env
+  .VITE_SUPABASE_BUCKET;
 
 export type challanProductAddingType = {
-    product_id: string;
-    quantity: number;
-    discount: number;
-  };
-  
+  product_id: string;
+  quantity: number;
+  discount: number;
+};
