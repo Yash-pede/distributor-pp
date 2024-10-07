@@ -1,6 +1,6 @@
 import { Database } from "@/utilities";
 import { useList, useNavigation } from "@refinedev/core";
-import { Button, Card } from "antd";
+import { Button, Card, Skeleton } from "antd";
 import dayjs from "dayjs";
 import React, { Suspense } from "react";
 import IconWrapper from "./icon-wrapper";
@@ -69,48 +69,9 @@ const ProductsChart = () => {
   }, [products, productsName?.data]);
 
   return (
-    <Card
-      style={{ height: "100%", width: "100%" }}
-      headStyle={{ padding: "8px 16px" }}
-      bodyStyle={{ padding: "24px 24px 0px 24px" }}
-      title={
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-          }}
-        >
-          <IconWrapper color="#E6F4FF">
-            <IconCurrencyRupee
-              className="md"
-              style={{
-                color: "#1677FF",
-              }}
-            />
-          </IconWrapper>
-          <Text size="sm" style={{ marginLeft: ".5rem" }}>
-            Products
-          </Text>
-        </div>
-      }
-      extra={
-        <Button onClick={() => list("deals")} icon={<RightCircleOutlined />}>
-          View All
-        </Button>
-      }
-    >
-      <div
-        style={{
-          display: "grid",
-          placeItems: "center",
-        }}
-      >
-        <Suspense>
-          <PieChartTiny data={productsData} />
-        </Suspense>
-      </div>
-    </Card>
+    <Skeleton active >
+      Products Graph data in progress
+    </Skeleton>
   );
 };
 
