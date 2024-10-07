@@ -47,6 +47,15 @@ export const OrdersList = () => {
         }
       ]
     },
+    filters: {
+      permanent: [
+        {
+          field: "distributor_id",
+          operator: "eq",
+          value: user.id,
+        },
+      ],
+    },
     pagination: {
       pageSize: 12,
     },
