@@ -1,4 +1,4 @@
-import { type FC, type PropsWithChildren, useState } from "react";
+  import { type FC, type PropsWithChildren, useState } from "react";
 
 import { List, useTable } from "@refinedev/antd";
 import { useList, type HttpError } from "@refinedev/core";
@@ -35,6 +35,9 @@ export const ProductsList: FC<PropsWithChildren> = ({ children }) => {
         value: 0,
       },
     ],
+    pagination: {
+      pageSize: 10000,
+    }
   });
 
   const {
@@ -72,7 +75,7 @@ export const ProductsList: FC<PropsWithChildren> = ({ children }) => {
       ];
     },
     pagination: {
-      pageSize: 12,
+      pageSize: 10000,
     },
     queryOptions: {
       enabled: !isStocksLoading,
