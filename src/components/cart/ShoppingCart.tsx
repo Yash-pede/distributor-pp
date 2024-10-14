@@ -33,15 +33,9 @@ export const ShoppingCart = ({ isOpen }: { isOpen: boolean }) => {
         resource: "orders",
         values: {
           order: cartItems.map((item, index) => {
-            const baseQ = data?.data.find((d: any) => d.id === item.id)?.base_q;
-            const quantity =
-              baseQ !== null && baseQ !== undefined
-                ? item.quantity + item.quantity / baseQ
-                : item.quantity;
-
             return {
               key: index + 1,
-              quantity: quantity,
+              quantity: item.quantity,
               product_id: item.id,
             };
           }),

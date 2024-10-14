@@ -16,11 +16,9 @@ import {
   type FormProps,
   Typography,
   InputNumber,
-  Flex,
 } from "antd";
 import { challanProductAddingType } from "@/utilities/constants";
 import { PdfLayout } from "./components/ChallanPreview";
-import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { Database } from "@/utilities";
 
 export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
@@ -81,7 +79,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
   });
 
   const onFinish: FormProps<challanProductAddingType>["onFinish"] = (
-    values,
+    values
   ) => {
     setChallan((prevChallan: any[]) => {
       close();
@@ -110,7 +108,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
       const newTotalAmount: number = challan.reduce(
         (total: number, item: any) => {
           const product = allProducts.data.find(
-            (product: any) => product.id === item.product_id,
+            (product: any) => product.id === item.product_id
           );
           if (product) {
             const subtotal: number =
@@ -121,12 +119,12 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
           }
           return total;
         },
-        0 as number,
+        0 as number
       );
       const newBillAmount: number = challan.reduce(
         (total: number, item: any) => {
           const product = allProducts.data.find(
-            (product: any) => product.id === item.product_id,
+            (product: any) => product.id === item.product_id
           );
           if (product) {
             const subtotal: number =
@@ -135,7 +133,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
           }
           return total;
         },
-        0 as number,
+        0 as number
       );
 
       setBillAmount(newBillAmount);
@@ -183,29 +181,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
   });
 
   const [form] = Form.useForm();
-  const handleProductIncrement = (productId: any) => {
-    form.setFieldValue(
-      "quantity",
-      form.getFieldValue("quantity") +
-        ((allProducts?.data.find((d) => d.id === productId)?.base_q ?? 0) +
-          (allProducts?.data.find((d) => d.id === productId)?.free_q ?? 0)),
-    );
-  };
-  const handleProductDecrement = (productId: any) => {
-    if (
-      (allProducts?.data.find((d) => d.id === productId)?.base_q ?? 0) +
-        (allProducts?.data.find((d) => d.id === productId)?.free_q ?? 0) ===
-      form?.getFieldValue("quantity")
-    ) {
-      return;
-    }
-    form?.setFieldValue(
-      "quantity",
-      form.getFieldValue("quantity") -
-        ((allProducts?.data.find((d) => d.id === productId)?.base_q ?? 0) +
-          (allProducts?.data.find((d) => d.id === productId)?.free_q ?? 0)),
-    );
-  };
+
   return (
     <>
       <Create
@@ -278,7 +254,6 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
           setAvailableqty(null);
           close();
         }}
-        
       >
         <Form
           form={form}
@@ -305,28 +280,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
             name="quantity"
             initialValue={0}
           >
-            <Flex align="center" gap="10px">
-              <Button
-                type="primary"
-                style={{ background: "red" }}
-                onClick={() =>
-                  handleProductDecrement(form.getFieldValue("product_id"))
-                }
-              >
-                <MinusOutlined />
-              </Button>
-              <Form.Item name="quantity" style={{ margin: 0 }}>
-                <InputNumber readOnly />
-              </Form.Item>
-              <Button
-                type="primary"
-                onClick={() =>
-                  handleProductIncrement(form.getFieldValue("product_id"))
-                }
-              >
-                <PlusOutlined />
-              </Button>
-            </Flex>
+            <InputNumber style={{ width: "100%" }} min={0} max={availableqty} addonAfter={availableqty} />
           </Form.Item>
           <Form.Item<challanProductAddingType>
             label="discount"

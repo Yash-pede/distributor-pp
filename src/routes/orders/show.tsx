@@ -118,40 +118,6 @@ export const OrdersShow = () => {
             return <NumberField value={value} />;
           }}
         />
-        <Table.Column
-          title="Scheme"
-          dataIndex={"quantity"}
-          render={(value, record: any) => {
-            return (
-              <TextField
-                value={
-                  value -
-                  (products?.data.find(
-                    (product) => product.id === record.product_id
-                  )?.free_q ?? 0) *
-                    (value /
-                      ((products?.data.find(
-                        (product) => product.id === record.product_id
-                      )?.free_q ?? 0) +
-                        (products?.data.find(
-                          (product) => product.id === record.product_id
-                        )?.base_q ?? 0))) +
-                  "  +  " +
-                  (value /
-                    ((products?.data.find(
-                      (product) => product.id === record.product_id
-                    )?.free_q ?? 0) +
-                      (products?.data.find(
-                        (product) => product.id === record.product_id
-                      )?.base_q ?? 0))) *
-                    (products?.data.find(
-                      (product) => product.id === record.product_id
-                    )?.free_q ?? 0)
-                }
-              />
-            );
-          }}
-        />
       </Table>
     </Show>
   );

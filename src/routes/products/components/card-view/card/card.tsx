@@ -97,18 +97,6 @@ export const ProductCard: FC<Props> = ({ product }) => {
               alignItems: "center",
             }}
           >
-            <Text>Base: {product.base_q}</Text>+
-            <Text>Free: {product.free_q}</Text>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              gap: "8px",
-              width: "100%",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
             <Text> ₹ {product.selling_price}</Text>
             <Text> MRP: {product.mrp}</Text>
           </div>
@@ -128,7 +116,7 @@ export const ProductCard: FC<Props> = ({ product }) => {
             }}
             onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
               e.preventDefault();
-              increaseCartQuantity(product.id, product.base_q || 1);
+              increaseCartQuantity(product.id, product.minimum_q || 1);
             }}
           >
             <IconShoppingCart /> Add to Cart
@@ -153,28 +141,30 @@ export const ProductCard: FC<Props> = ({ product }) => {
                 width: "100%",
               }}
             >
-              <Button
-                type="primary"
-                disabled={getItemsQuantity(product.id) <= 5}
-                onClick={() =>
-                  decreaseCartQuantity(product.id, product.base_q || 1)
-                }
-              >
-                -
-              </Button>
               <InputNumber
+                size="large"
+                addonBefore={
+                  <Button
+                    type="text"
+                    disabled={getItemsQuantity(product.id) <= product.minimum_q}
+                    onClick={() => decreaseCartQuantity(product.id, 1)}
+                  >
+                    -
+                  </Button>
+                }
                 value={getItemsQuantity(product.id)}
                 defaultValue={getItemsQuantity(product.id)}
-                readOnly
-              />
-              <Button
-                type="primary"
-                onClick={() =>
-                  increaseCartQuantity(product.id, product.base_q || 1)
+                addonAfter={
+                  <Button
+                    type="text"
+                    onClick={() =>
+                      increaseCartQuantity(product.id, product.minimum_q || 1)
+                    }
+                  >
+                    +
+                  </Button>
                 }
-              >
-                +
-              </Button>
+              />
             </div>
             <div
               style={{
