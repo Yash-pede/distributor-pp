@@ -12,6 +12,7 @@ type ShoppingCartContext = {
   getItemsQuantity: (id: number) => number;
   increaseCartQuantity: (id: number, quantityToAdd: number) => void;
   decreaseCartQuantity: (id: number, quantityToDecrease: number) => void;
+  setCartQuantity: (id: number, quantity: number) => void;
   removeFromCart: (id: number) => void;
   cartQuantity: number;
   cartItems: CartItem[];
@@ -79,6 +80,22 @@ export function ShoppingCartProvider({
     });
   }
 
+  function setCartQuantity(id: number, quantity: number) {
+    setCartItems((currItems) => {
+      if (currItems.find((item) => item.id === id) == null) {
+        return [...currItems, { id, quantity }];
+      } else {
+        return currItems.map((item) => {
+          if (item.id === id) {
+            return { ...item, quantity };
+          } else {
+            return item;
+          }
+        });
+      }
+    });
+  }
+
   function removeFromCart(id: number) {
     setCartItems((currItems) => {
       return currItems.filter((item) => item.id !== id);
@@ -97,6 +114,7 @@ export function ShoppingCartProvider({
         increaseCartQuantity,
         decreaseCartQuantity,
         removeFromCart,
+        setCartQuantity,
         cartQuantity,
         openCart,
         closeCart,

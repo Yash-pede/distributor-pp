@@ -1,8 +1,8 @@
 import type { FC } from "react";
 
-import { useDelete, useGo } from "@refinedev/core";
+import { useGo } from "@refinedev/core";
 
-import { DeleteOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
+import { EyeOutlined, MoreOutlined } from "@ant-design/icons";
 import { Button, Card, Dropdown, Flex, Image, InputNumber } from "antd";
 import { Database } from "@/utilities";
 import { ProductCardSkeleton } from "./skeleton";
@@ -10,6 +10,7 @@ import { Text } from "@/components";
 import { supabaseBucket_Product_images } from "@/utilities/constants";
 import { useShoppingCart } from "@/contexts/color-mode/cart/ShoppingCartContext";
 import { IconShoppingCart } from "@tabler/icons-react";
+import { debounce } from "lodash";
 
 type Props = {
   product: Database["public"]["Tables"]["products"]["Row"];
@@ -17,16 +18,20 @@ type Props = {
 
 export const ProductCard: FC<Props> = ({ product }) => {
   const go = useGo();
-  const { mutate } = useDelete();
 
   const {
     getItemsQuantity,
     decreaseCartQuantity,
     increaseCartQuantity,
+    setCartQuantity,
     removeFromCart,
   } = useShoppingCart();
 
   if (!product) return <ProductCardSkeleton />;
+
+  const debouncedSetCartQuantity = debounce((value) => {
+    setCartQuantity(product.id, value);
+  }, 500);
 
   return (
     <Card size="small">
@@ -153,6 +158,7 @@ export const ProductCard: FC<Props> = ({ product }) => {
                   </Button>
                 }
                 value={getItemsQuantity(product.id)}
+                onChange={(value) => debouncedSetCartQuantity(value)}
                 defaultValue={getItemsQuantity(product.id)}
                 addonAfter={
                   <Button
