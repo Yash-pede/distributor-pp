@@ -22,6 +22,9 @@ export const InventoryList = () => {
         },
       ],
     },
+    pagination: {
+      mode:"off"
+    }
   });
   const { data: BatchDetails, isLoading: isLoadingBatch } = useList<
     Database["public"]["Tables"]["stocks"]["Row"]
@@ -49,6 +52,10 @@ export const InventoryList = () => {
     Database["public"]["Tables"]["products"]["Row"]
   >({
     resource: "products",
+    pagination: {
+      current: 1,
+      pageSize: 1000,
+    },
     filters: [
       {
         field: "id",
@@ -65,39 +72,31 @@ export const InventoryList = () => {
     resource: "products",
     optionLabel: "name",
     optionValue: "id",
-    filters: [
-      {
-        field: "id",
-        operator: "in",
-        value: tableQueryResult.data?.data.map((item) => item.product_id),
-      },
-    ],
-    defaultValue: tableQueryResult.data?.data.map((item) => item.product_id),
   });
 
   useEffect(() => {
     const productWiseData: {
-      [productId: string]: {
-        productId: number;
+      [id: string]: {
+        id: number;
         batches: { batchId: string; quantity: number }[];
         quantity: number;
       };
     } = {};
 
     tableQueryResult?.data?.data.forEach((item) => {
-      const productId = item.product_id;
+      const id = item.product_id;
       const batchId = item.batch_id;
       const quantity = item.quantity;
 
-      if (productId in productWiseData) {
-        productWiseData[productId].batches.push({
+      if (id in productWiseData) {
+        productWiseData[id].batches.push({
           batchId,
           quantity,
         });
-        productWiseData[productId].quantity += quantity;
+        productWiseData[id].quantity += quantity;
       } else {
-        productWiseData[productId] = {
-          productId,
+        productWiseData[id] = {
+          id,
           batches: [
             {
               batchId,
@@ -167,13 +166,13 @@ export const InventoryList = () => {
     >
       <Table
         {...tableProps}
-        rowKey={"productId"}
-        dataSource={productWiseArrange}
+        rowKey={"id"}
+        dataSource={productWiseArrange} 
         expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
       >
-        <Table.Column dataIndex="id" title="ID" hidden />
+        <Table.Column dataIndex="id" title="ID" />
         <Table.Column
-          dataIndex="productId"
+          dataIndex="id"
           title="Product ID"
           filterDropdown={(props) => (
             <FilterDropdown {...props}>
@@ -200,13 +199,6 @@ export const InventoryList = () => {
           title="Quantity"
           sorter={{ multiple: 2 }}
           defaultSortOrder={getDefaultSortOrder("id", sorters)}
-        />
-        <Table.Column
-          dataIndex="created_at"
-          title="Created"
-          sorter={{ multiple: 2 }}
-          defaultSortOrder={getDefaultSortOrder("id", sorters)}
-          render={(value) => <DateField value={value} />}
         />
       </Table>
     </Show>
