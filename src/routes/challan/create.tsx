@@ -52,6 +52,10 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
         value: sales ? bossData?.data?.boss_id : User?.id,
       },
     ],
+    pagination: {
+      current: 1,
+      pageSize: 1000,
+    },
   });
 
   const { selectProps: productSelectProps, queryResult: products } = useSelect({
@@ -75,6 +79,10 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
           value,
         },
       ];
+    },
+    pagination: {
+      current: 1,
+      pageSize: 1000,
     },
   });
 

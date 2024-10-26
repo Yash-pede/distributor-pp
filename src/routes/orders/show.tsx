@@ -63,6 +63,10 @@ export const OrdersShow = () => {
         value: order?.data?.data[0]?.order?.map((item: any) => item.product_id),
       },
     ],
+    pagination: {
+      current: 1,
+      pageSize: 1000,
+    },
   });
 
   return (
