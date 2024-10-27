@@ -5,4 +5,6 @@ export type challanProductAddingType = {
   product_id: string;
   quantity: number;
   discount: number;
+  free_q: number;
+  actual_q: number;
 };

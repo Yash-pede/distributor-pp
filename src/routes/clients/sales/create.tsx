@@ -23,14 +23,6 @@ export const SalesCreate = () => {
     userId: string,
     userRole: Database["public"]["Enums"]["ROLES"]
   ) => {
-    open &&
-      open({
-        key: "assign-user",
-        type: "progress",
-        message: "Assigning User Role...",
-        description: "Please wait while we assign your User Role.",
-        undoableTimeout: 2000,
-      });
     mutate({
       resource: "profiles",
       id: userId,
@@ -38,10 +30,6 @@ export const SalesCreate = () => {
         role: userRole as Database["public"]["Enums"]["ROLES"],
       },
     });
-
-    if (isSuccess) {
-      close && close("assign-user");
-    } 
     // else {
     //   close && close("assign-user");
     //   open &&

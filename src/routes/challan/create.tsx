@@ -18,7 +18,6 @@ import {
   InputNumber,
 } from "antd";
 import { challanProductAddingType } from "@/utilities/constants";
-import { PdfLayout } from "./components/ChallanPreview";
 import { Database } from "@/utilities";
 
 export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
@@ -89,27 +88,34 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
   const onFinish: FormProps<challanProductAddingType>["onFinish"] = (
     values
   ) => {
+    const totalQuantity = values.free_q + values.quantity;
+    const modifiedValues = {
+      ...values,
+      quantity: totalQuantity,
+      actual_q: values.quantity,
+    };
+
     setChallan((prevChallan: any[]) => {
       close();
       if (prevChallan) {
-        return [...prevChallan, values];
+        return [...prevChallan, modifiedValues];
       }
-      return [values];
+      return [modifiedValues];
     });
+
     form.resetFields();
     setAvailableqty(null);
   };
-  const {
-    close: closePdfModal,
-    show: showPdfModal,
-    modalProps: pdfModalProps,
-  } = useModal();
+
   const { mutate, isError } =
     useCreate<Database["public"]["Tables"]["challan"]["Insert"]>();
   const { data: allProducts, isLoading: allProductsLoading } = useList<
     Database["public"]["Tables"]["products"]["Row"]
   >({
     resource: "products",
+    pagination: {
+      pageSize: 10000,
+    },
   });
   useEffect(() => {
     if (challan && allProducts?.data) {
@@ -120,7 +126,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
           );
           if (product) {
             const subtotal: number =
-              item.quantity * (product.selling_price || 0);
+              item.actual_q * (product.selling_price || 0);
             const discountAmount: number =
               subtotal * (item.discount * 0.01 || 0);
             return total + subtotal - discountAmount;
@@ -136,7 +142,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
           );
           if (product) {
             const subtotal: number =
-              item.quantity * (product.selling_price || 0);
+              item.actual_q * (product.selling_price || 0);
             return total + subtotal;
           }
           return total;
@@ -195,7 +201,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
       <Create
         saveButtonProps={{ style: { display: "none" } }}
         footerButtons={
-          <Button type="primary" onClick={onChallanCreate}>
+          <Button type="primary" onClick={onChallanCreate} disabled={!customer || challan.length === 0}>
             Create Challan
           </Button>
         }
@@ -203,15 +209,6 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
           <>
             <Button style={{ margin: "10px 0" }} onClick={show}>
               Add Products
-            </Button>
-
-            <Button
-              disabled={!customer || !challan.length}
-              onClick={() => {
-                showPdfModal();
-              }}
-            >
-              Preview Challan
             </Button>
           </>
         }
@@ -249,6 +246,15 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
             },
             {
               title: "Quantity",
+              dataIndex: "actual_q",
+            },
+
+            {
+              title: "Free",
+              dataIndex: "free_q",
+            },
+            {
+              title: "Total",
               dataIndex: "quantity",
             },
           ]}
@@ -288,7 +294,19 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
             name="quantity"
             initialValue={0}
           >
-            <InputNumber style={{ width: "100%" }} min={0} max={availableqty} addonAfter={availableqty} />
+            <InputNumber
+              style={{ width: "100%" }}
+              min={0}
+              max={availableqty}
+              addonAfter={availableqty}
+            />
+          </Form.Item>
+          <Form.Item<challanProductAddingType>
+            label="free Quantity"
+            name="free_q"
+            initialValue={0}
+          >
+            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item<challanProductAddingType>
             label="discount"
@@ -303,13 +321,6 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
             </Button>
           </Form.Item>
         </Form>
-      </Modal>
-      <Modal
-        {...pdfModalProps}
-        style={{ width: "100% !important" }}
-        okButtonProps={{ style: { display: "none" } }}
-      >
-        <PdfLayout billInfo={challan} customerId={customer} />
       </Modal>
     </>
   );
