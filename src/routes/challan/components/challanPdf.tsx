@@ -158,7 +158,6 @@ export const ChallanPdf = () => {
               <Text style={styles.tableHeaderItem}>Item Name</Text>
               <Text style={styles.tableHeaderItem}>Quantity</Text>
               <Text style={styles.tableHeaderItem}>Free Q</Text>
-              <Text style={styles.tableHeaderItem}>Total Q</Text>
               <Text style={styles.tableHeaderItem}>Price/Unit</Text>
               <Text style={styles.tableHeaderItem}>SubTotal</Text>
               <Text style={styles.tableHeaderItem}>Discount</Text>
@@ -173,9 +172,6 @@ export const ChallanPdf = () => {
                       (product: any) => product.id === item.product_id
                     )?.name
                   }
-                </Text>
-                <Text style={styles.tableCol}>
-                {item.quantity}
                 </Text>
                 <Text style={styles.tableCol}>
                  {item.actual_q}
