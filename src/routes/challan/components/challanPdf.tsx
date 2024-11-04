@@ -27,6 +27,8 @@ export const ChallanPdf = () => {
     product_id: string;
     quantity: number;
     discount: number;
+    actual_q: number;
+    free_q: number;
   };
   const { data: challanData, isLoading: challanLoading } = useOne<
     Database["public"]["Tables"]["challan"]["Row"],
