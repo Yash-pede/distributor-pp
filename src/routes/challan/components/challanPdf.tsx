@@ -97,7 +97,7 @@ export const ChallanPdf = () => {
           (product: { id: string }) => product.id === item.product_id
         );
         if (product) {
-          const subtotal = item.quantity * (product.selling_price || 0);
+          const subtotal = item.actual_q * (product.selling_price || 0);
           const discountAmount = subtotal * (item.discount * 0.01 || 0);
           return total + subtotal - discountAmount;
         }
@@ -157,6 +157,7 @@ export const ChallanPdf = () => {
               <Text style={styles.tableHeaderItem}>S NO.</Text>
               <Text style={styles.tableHeaderItem}>Item Name</Text>
               <Text style={styles.tableHeaderItem}>Quantity</Text>
+              <Text style={styles.tableHeaderItem}>Free Q</Text>
               <Text style={styles.tableHeaderItem}>Price/Unit</Text>
               <Text style={styles.tableHeaderItem}>SubTotal</Text>
               <Text style={styles.tableHeaderItem}>Discount</Text>
@@ -173,7 +174,10 @@ export const ChallanPdf = () => {
                   }
                 </Text>
                 <Text style={styles.tableCol}>
-                {item.quantity}
+                 {item.actual_q}
+                </Text>
+                <Text style={styles.tableCol}>
+                 {item.free_q}
                 </Text>
                 <Text style={styles.tableCol}>
                   {
@@ -183,7 +187,7 @@ export const ChallanPdf = () => {
                   }
                 </Text>
                 <Text style={styles.tableCol}>
-                  {item.quantity *
+                  {item.actual_q *
                     (products.find(
                       (product: any) => product.id === item.product_id
                     )?.selling_price || 0)}
@@ -191,11 +195,11 @@ export const ChallanPdf = () => {
                 <Text style={styles.tableCol}>{item.discount}%</Text>
                 <Text style={styles.tableCol}>
                   {(
-                    item.quantity *
+                    item.actual_q *
                       (products.find(
                         (product: any) => product.id === item.product_id
                       )?.selling_price || 0) -
-                    item.quantity *
+                    item.actual_q *
                       (products.find(
                         (product: any) => product.id === item.product_id
                       )?.selling_price || 0) *
