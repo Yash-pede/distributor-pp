@@ -184,7 +184,7 @@ export const Sider: React.FC = () => {
         <Button
           style={drawerButtonStyles}
           size="large"
-          onClick={() => setMobileSiderOpen(true)}
+          onClick={() => setMobileSiderOpen(!mobileSiderOpen)}
           icon={<BarsOutlined />}
         />
       </>
