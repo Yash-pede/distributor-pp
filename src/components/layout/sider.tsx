@@ -148,21 +148,23 @@ export const Sider: React.FC = () => {
           width={256}
           bodyStyle={{
             padding: 0,
+            overflowX: "hidden",
           }}
           maskClosable={true}
         >
           <Layout>
             <Layout.Sider
-              width={500}
+              width={256}
               style={{
                 height: "100vh",
                 backgroundColor: token.colorBgContainer,
                 borderRight: `1px solid ${token.colorBorderBg}`,
+                overflowX: "hidden",
               }}
             >
               <div
                 style={{
-                  width: "256px",
+                  width: "100%",
                   padding: "0 16px",
                   display: "flex",
                   justifyContent: "flex-start",
@@ -170,6 +172,7 @@ export const Sider: React.FC = () => {
                   height: "64px",
                   backgroundColor: token.colorBgElevated,
                   borderBottom: "none",
+                  overflow: "hidden",
                 }}
               >
                 <Title collapsed={false} />
