@@ -58,10 +58,12 @@ const CreateProductInChallan = ({
             <Select
               {...productSelectProps}
               onChange={() => {
+                const productId = form.getFieldValue("product_id");
                 const selectedProduct = productsData?.data?.find(
-                  (product:any) => product.id === form.getFieldValue("product_id")
+                  (product: Database["public"]["Tables"]["products"]["Row"]) => 
+                    product.id === productId
                 );
-                const defaultSellingPrice = selectedProduct?.selling_price || 0;
+                const defaultSellingPrice = selectedProduct?.selling_price ?? 0;
                 form.setFieldsValue({
                   selling_price: defaultSellingPrice,
                 });
