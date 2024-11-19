@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   useCreate,
   useGetIdentity,
@@ -6,29 +6,23 @@ import {
   useList,
   useOne,
 } from "@refinedev/core";
-import { Create, useModal, useSelect } from "@refinedev/antd";
-import {
-  Button,
-  Form,
-  Modal,
-  Select,
-  Table,
-  type FormProps,
-  Typography,
-  InputNumber,
-} from "antd";
+import { Create, useSelect } from "@refinedev/antd";
+import { Button, Select, Table, Typography, Skeleton } from "antd";
 import { challanProductAddingType } from "@/utilities/constants";
 import { Database } from "@/utilities";
+import CreateProductInChallan from "./components/createProductInChallan";
+import { IconX } from "@tabler/icons-react";
 
 export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
   const go = useGo();
-  const [challan, setChallan] = React.useState<any>([]);
-  const [availableqty, setAvailableqty] = React.useState<any>();
+  const [challan, setChallan] = React.useState<
+    challanProductAddingType[] | any
+  >([]);
   const [customer, setCustomer] = React.useState<any>();
   const [totalAmount, setTotalAmount] = React.useState<any>();
   const [billAmount, setBillAmount] = React.useState<any>();
-  const { show, close, modalProps } = useModal();
   const { data: User } = useGetIdentity<any>();
+  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 
   const { data: bossData, isLoading: isLoadingBossId } = useOne<
     Database["public"]["Tables"]["profiles"]["Row"]
@@ -57,7 +51,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
     },
   });
 
-  const { selectProps: productSelectProps, queryResult: products } = useSelect({
+  const { selectProps: productSelectProps} = useSelect({
     resource: "products",
     optionLabel: "name",
     optionValue: "id",
@@ -84,49 +78,38 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
       pageSize: 1000,
     },
   });
-
-  const onFinish: FormProps<challanProductAddingType>["onFinish"] = (
-    values
-  ) => {
-    const totalQuantity = values.free_q + values.quantity;
-    const modifiedValues = {
-      ...values,
-      quantity: totalQuantity,
-      actual_q: values.quantity,
-    };
-
-    setChallan((prevChallan: any[]) => {
-      close();
-      if (prevChallan) {
-        return [...prevChallan, modifiedValues];
-      }
-      return [modifiedValues];
-    });
-
-    form.resetFields();
-    setAvailableqty(null);
-  };
-
-  const { mutate, isError } =
-    useCreate<Database["public"]["Tables"]["challan"]["Insert"]>();
-  const { data: allProducts, isLoading: allProductsLoading } = useList<
+  const { data: productsData, isLoading: isLoadingProductsData } = useList<
     Database["public"]["Tables"]["products"]["Row"]
   >({
     resource: "products",
+    filters:
+      challan.length > 0
+        ? [
+            {
+              field: "id",
+              operator: "in",
+              value: challan.map((item: any) => item.product_id),
+            },
+          ]
+        : [],
     pagination: {
-      pageSize: 10000,
+      current: 1,
+      pageSize: 1000,
     },
   });
+  const { mutate, isError } =
+    useCreate<Database["public"]["Tables"]["challan"]["Insert"]>();
   useEffect(() => {
-    if (challan && allProducts?.data) {
+    if (challan && productsData?.data) {
       const newTotalAmount: number = challan.reduce(
         (total: number, item: any) => {
-          const product = allProducts.data.find(
+          const product = productsData.data.find(
             (product: any) => product.id === item.product_id
           );
           if (product) {
             const subtotal: number =
-              item.actual_q * (product.selling_price || 0);
+              item.actual_q *
+              (item.selling_price || product.selling_price || 0);
             const discountAmount: number =
               subtotal * (item.discount * 0.01 || 0);
             return total + subtotal - discountAmount;
@@ -137,12 +120,13 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
       );
       const newBillAmount: number = challan.reduce(
         (total: number, item: any) => {
-          const product = allProducts.data.find(
+          const product = productsData.data.find(
             (product: any) => product.id === item.product_id
           );
           if (product) {
             const subtotal: number =
-              item.actual_q * (product.selling_price || 0);
+              item.actual_q *
+              (item.selling_price || product.selling_price || 0);
             return total + subtotal;
           }
           return total;
@@ -153,7 +137,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
       setBillAmount(newBillAmount);
       setTotalAmount(newTotalAmount);
     }
-  }, [challan, allProducts?.data]);
+  }, [challan]);
 
   const onChallanCreate = () => {
     mutate({
@@ -194,20 +178,25 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
     ],
   });
 
-  const [form] = Form.useForm();
-
   return (
     <>
       <Create
         saveButtonProps={{ style: { display: "none" } }}
         footerButtons={
-          <Button type="primary" onClick={onChallanCreate} disabled={!customer || challan.length === 0}>
+          <Button
+            type="primary"
+            onClick={onChallanCreate}
+            disabled={!customer || challan.length === 0}
+          >
             Create Challan
           </Button>
         }
         headerButtons={
           <>
-            <Button style={{ margin: "10px 0" }} onClick={show}>
+            <Button
+              style={{ margin: "10px 0" }}
+              onClick={() => setOpenDrawer(true)}
+            >
               Add Products
             </Button>
           </>
@@ -235,14 +224,18 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
             {
               title: "Product",
               dataIndex: "product_id",
-              render: (value) => (
-                <Typography.Text>
-                  {
-                    products.data?.data.find((product) => product.id === value)
-                      ?.name
-                  }
-                </Typography.Text>
-              ),
+              render: (value) => {
+                if (isLoadingProductsData) return <Skeleton.Button />;
+                return (
+                  <Typography.Text>
+                    {
+                      productsData?.data?.find(
+                        (product) => product.id === value
+                      )?.name
+                    }
+                  </Typography.Text>
+                );
+              },
             },
             {
               title: "Quantity",
@@ -257,71 +250,36 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
               title: "Total",
               dataIndex: "quantity",
             },
+            {
+              title: "Action",
+              render: (value) => {
+                return (
+                  <Button
+                    variant="filled"
+                    color="danger"
+                    size="small"
+                    onClick={() =>
+                      setChallan((prev: challanProductAddingType[]) =>
+                        prev.filter((item) => item.product_id !== value.product_id)
+                      )
+                    }
+                  >
+                    <IconX />
+                  </Button>
+                );
+              },
+            },
           ]}
         />
       </Create>
-      <Modal
-        {...modalProps}
-        okButtonProps={{ style: { display: "none" } }}
-        onCancel={() => {
-          form.resetFields();
-          setAvailableqty(null);
-          close();
-        }}
-      >
-        <Form
-          form={form}
-          name="Product Challan"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          onFinish={onFinish}
-        >
-          {availableqty ? (
-            <Button type="text" style={{ width: "100%" }}>
-              Available Quantity {availableqty}
-            </Button>
-          ) : null}
-          <Form.Item<challanProductAddingType>
-            label="Product"
-            name="product_id"
-            rules={[{ required: true, message: "Product is required" }]}
-          >
-            <Select {...productSelectProps} />
-          </Form.Item>
-
-          <Form.Item<challanProductAddingType>
-            label="Quantity"
-            name="quantity"
-            initialValue={0}
-          >
-            <InputNumber
-              style={{ width: "100%" }}
-              min={0}
-              max={availableqty}
-              addonAfter={availableqty}
-            />
-          </Form.Item>
-          <Form.Item<challanProductAddingType>
-            label="free Quantity"
-            name="free_q"
-            initialValue={0}
-          >
-            <InputNumber style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item<challanProductAddingType>
-            label="discount"
-            name="discount"
-            initialValue={0}
-          >
-            <InputNumber style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              Add
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+      <CreateProductInChallan
+        openDrawer={openDrawer}
+        productSelectProps={productSelectProps}
+        challan={challan}
+        productsData={productsData}
+        setChallan={setChallan}
+        setOpenDrawer={setOpenDrawer}
+      />
     </>
   );
 };

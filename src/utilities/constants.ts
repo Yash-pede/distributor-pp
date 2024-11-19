@@ -7,4 +7,5 @@ export type challanProductAddingType = {
   discount: number;
   free_q: number;
   actual_q: number;
+  selling_price: number;
 };
