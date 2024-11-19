@@ -74,6 +74,10 @@ const CreateProductInChallan = ({
             label="Quantity"
             name="quantity"
             initialValue={0}
+            rules={[
+              { required: true, message: "Quantity is required" },
+              { type: "number", min: 0, message: "Quantity must be positive" }
+            ]}
           >
             <InputNumber
               style={{ width: "100%" }}
@@ -91,12 +95,19 @@ const CreateProductInChallan = ({
             label="discount"
             name="discount"
             initialValue={0}
+            rules={[
+              { type: "number", min: 0, max: 100, message: "Discount must be between 0-100%" }
+            ]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item<challanProductAddingType>
             label="Selling Price"
             name="selling_price"
+            rules={[
+              { required: true, message: "Selling price is required" },
+              { type: "number", min: 0, message: "Price must be positive" }
+            ]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
