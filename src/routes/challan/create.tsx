@@ -51,7 +51,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
     },
   });
 
-  const { selectProps: productSelectProps} = useSelect({
+  const { selectProps: productSelectProps } = useSelect({
     resource: "products",
     optionLabel: "name",
     optionValue: "id",
@@ -220,6 +220,9 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
         </div>
         <Table
           dataSource={challan}
+          style={{
+            overflow: "auto",
+          }}
           columns={[
             {
               title: "Product",
@@ -260,7 +263,9 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
                     size="small"
                     onClick={() =>
                       setChallan((prev: challanProductAddingType[]) =>
-                        prev.filter((item) => item.product_id !== value.product_id)
+                        prev.filter(
+                          (item) => item.product_id !== value.product_id
+                        )
                       )
                     }
                   >

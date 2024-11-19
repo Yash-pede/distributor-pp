@@ -26,3 +26,5 @@ _.sln
 \*.sw?
 .env*
 .env
+
+android

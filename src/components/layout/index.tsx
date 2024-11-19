@@ -13,7 +13,7 @@ export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   return (
     <ThemedLayoutContextProvider>
-      <AntdLayout hasSider style={{ minHeight: "100vh",paddingTop: "env(safe-area-inset-top, 0px)" }}>
+      <AntdLayout hasSider style={{ minHeight: "100vh", paddingTop: "env(safe-area-inset-top, 0px)", paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
         <Sider />
         <AntdLayout>
           <Header />
