@@ -1,4 +1,4 @@
-import React, { type CSSProperties } from "react";
+import React from "react";
 
 import { useThemedLayoutContext } from "@refinedev/antd";
 import {
@@ -10,7 +10,6 @@ import {
 } from "@refinedev/core";
 
 import {
-  BarsOutlined,
   LeftOutlined,
   RightOutlined,
   UnorderedListOutlined,
@@ -18,14 +17,6 @@ import {
 import { Button, Drawer, Grid, Layout, Menu, theme } from "antd";
 
 import { Title } from "./title";
-
-const drawerButtonStyles: CSSProperties = {
-  borderTopLeftRadius: 0,
-  borderBottomLeftRadius: 0,
-  position: "fixed",
-  top: 64,
-  zIndex: 1001,
-};
 
 const { SubMenu } = Menu;
 const { useToken } = theme;
@@ -181,12 +172,6 @@ export const Sider: React.FC = () => {
             </Layout.Sider>
           </Layout>
         </Drawer>
-        <Button
-          style={drawerButtonStyles}
-          size="large"
-          onClick={() => setMobileSiderOpen(!mobileSiderOpen)}
-          icon={<BarsOutlined />}
-        />
       </>
     );
   };
