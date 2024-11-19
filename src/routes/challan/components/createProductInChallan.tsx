@@ -29,6 +29,10 @@ const CreateProductInChallan = ({
 
   formProps.onFinish= (values:any) =>{
     const totalQuantity = values.free_q + values.quantity;
+    if (totalQuantity < 0) {
+      form.resetFields();
+      return;
+    }
     const modifiedValues = {
       ...values,
       quantity: totalQuantity,
