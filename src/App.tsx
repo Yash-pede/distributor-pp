@@ -36,6 +36,7 @@ import { ChallanPdf } from "./routes/challan/components/challanPdf";
 import { FundsCreate, FundsList } from "./routes/funds";
 import { TargetCreate } from "./components/targets/create";
 import DashboardHome from "./routes/dashboard/show";
+import { MoneyList, ReportProducts, ReportsList, Targets, UserSelect } from "./routes/reports";
 
 function App() {
   return (
@@ -137,6 +138,20 @@ function App() {
                         <Route path="audit-log">
                           <Route index element={<AuditLogList />} />
                         </Route>
+                        <Route path="reports">
+                        <Route index element={<ReportsList />} />
+                        <Route path="targets">
+                          <Route index element={<UserSelect />} />
+                          <Route path=":id" element={<Targets />} />
+                          <Route path="create/:id" element={<TargetCreate />} />
+                        </Route>
+                        <Route path="money">
+                          <Route index element={<MoneyList />} />
+                        </Route>
+                        <Route path="products">
+                          <Route index element={<ReportProducts />} />
+                        </Route>
+                      </Route>
                       </Route>
                     </Route>
                           
