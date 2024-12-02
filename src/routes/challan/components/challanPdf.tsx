@@ -299,10 +299,8 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   invoiceHeadingText: {
-    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
-    marginVertical: 12,
     fontFamily: "Helvetica-Bold",
   },
   invoiceLineSpacing: {
