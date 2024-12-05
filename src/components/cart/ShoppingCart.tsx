@@ -26,6 +26,17 @@ export const ShoppingCart = ({ isOpen }: { isOpen: boolean }) => {
       if (!authProvider.getIdentity) {
         return;
       }
+      const hasInvalidQuantity = cartItems.some(
+        (item) =>
+          item.quantity === null ||
+          item.quantity === undefined ||
+          typeof item.quantity !== "number" ||
+          item.quantity <= 0
+      );
+  
+      if (hasInvalidQuantity) {
+        throw new Error("Invalid quantity detected. Please check your cart.");
+      }
       const user = await authProvider.getIdentity();
       const userId = user as any;
 
