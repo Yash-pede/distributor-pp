@@ -107,11 +107,8 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
             (product: any) => product.id === item.product_id
           );
           if (product) {
-            const subtotal: number =
-              item.actual_q *
-              (item.selling_price || product.selling_price || 0);
-            const discountAmount: number =
-              subtotal * (item.discount * 0.01 || 0);
+            const subtotal: number = item.actual_q * (product.selling_price || 0);
+            const discountAmount: number = subtotal * (item.discount * 0.01 || 0);
             return total + subtotal - discountAmount;
           }
           return total;
@@ -124,9 +121,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
             (product: any) => product.id === item.product_id
           );
           if (product) {
-            const subtotal: number =
-              item.actual_q *
-              (item.selling_price || product.selling_price || 0);
+            const subtotal: number = item.actual_q * (product.selling_price || 0);
             return total + subtotal;
           }
           return total;

@@ -150,7 +150,7 @@ export const ChallanPdf = () => {
           <View style={styles.table}>
             <View style={styles.tableHeader}>
               <Text style={{ paddingHorizontal: 3 }}>#</Text>
-              <Text style={{ ...styles.tableHeaderItem, flex: 4.42}}>
+              <Text style={{ ...styles.tableHeaderItem, flex: 4.42, textAlign: "left" }}>
                 Item Name
               </Text>
               <Text style={styles.tableHeaderItem}>Quantity</Text>
