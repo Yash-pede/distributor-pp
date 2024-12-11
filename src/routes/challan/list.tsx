@@ -21,9 +21,9 @@ import {
   useSelect,
   useTable,
 } from "@refinedev/antd";
-import { useGetIdentity, useList, useUpdate } from "@refinedev/core";
+import { useGetIdentity, useGo, useList, useUpdate } from "@refinedev/core";
 import FormItem from "antd/lib/form/FormItem";
-import { SearchOutlined } from "@ant-design/icons";
+import { FilePdfFilled, SearchOutlined } from "@ant-design/icons";
 import { Database } from "@/utilities";
 import { Text } from "@/components";
 
@@ -31,6 +31,7 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
   const [IdToUpdateReceived, setIdToUpdateReceived] = React.useState<any>(null);
   const { data: User } = useGetIdentity<any>();
   const [userFilters, setUserFilters] = React.useState<any>(null);
+  const go = useGo();
 
   const { data: Customers, isLoading: isLoadingCustomers } = useList<
     Database["public"]["Tables"]["customers"]["Row"]
@@ -271,7 +272,7 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
         />
         <Table.Column
           title="Action"
-          render={(row) => (
+          render={(row,record) => (
             <div style={{ display: "flex", gap: "10px" }}>
               <Button
                 onClick={() => {
@@ -281,13 +282,14 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
               >
                 Update
               </Button>
-              <ShowButton recordItemId={row.id} />
+              <ShowButton recordItemId={row.id} hideText />
+              <Button type="primary" onClick={() => go({ to: `/challan/pdf/${record.id}`})} variant="link" color="default" icon><FilePdfFilled/> </Button>
             </div>
           )}
         />
       </Table>
       <Modal
-        visible={IdToUpdateReceived !== null}
+        open={IdToUpdateReceived !== null}
         okButtonProps={{ onClick: () => form.submit(), htmlType: "submit" }}
         onCancel={() => {
           setIdToUpdateReceived(null);
