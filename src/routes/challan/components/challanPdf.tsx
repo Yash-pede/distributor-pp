@@ -355,7 +355,6 @@ const styles = StyleSheet.create({
   tableRow: {
     display: "flex",
     flexDirection: "row",
-    backgroundColor: "#f9f9f9",
   },
   tableCol: {
     flex: 1,
