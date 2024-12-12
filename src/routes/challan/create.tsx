@@ -82,51 +82,41 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
     Database["public"]["Tables"]["products"]["Row"]
   >({
     resource: "products",
-    filters:
-      challan.length > 0
-        ? [
-            {
-              field: "id",
-              operator: "in",
-              value: challan.map((item: any) => item.product_id),
-            },
-          ]
-        : [],
+    filters: [
+      {
+        field: "id",
+        operator: "in",
+        value: challan.map((item: any) => item.product_id),
+      },
+    ],
     pagination: {
       current: 1,
       pageSize: 1000,
     },
+    meta: {
+      select: "name,id",
+    },
   });
+
   const { mutate, isError } =
     useCreate<Database["public"]["Tables"]["challan"]["Insert"]>();
   useEffect(() => {
-    if (challan && productsData?.data) {
+    if (challan) {
       const newTotalAmount: number = challan.reduce(
         (total: number, item: any) => {
-          const product = productsData.data.find(
-            (product: any) => product.id === item.product_id
-          );
-          if (product) {
-            const subtotal: number = item.actual_q * (product.selling_price || 0);
-            const discountAmount: number = subtotal * (item.discount * 0.01 || 0);
-            return total + subtotal - discountAmount;
-          }
-          return total;
+          const subtotal: number = item.actual_q * item.selling_price;
+          const discountAmount: number = subtotal * (item.discount * 0.01 || 0);
+          return total + subtotal - discountAmount;
         },
-        0 as number
+        0
       );
+
       const newBillAmount: number = challan.reduce(
         (total: number, item: any) => {
-          const product = productsData.data.find(
-            (product: any) => product.id === item.product_id
-          );
-          if (product) {
-            const subtotal: number = item.actual_q * (product.selling_price || 0);
-            return total + subtotal;
-          }
-          return total;
+          const subtotal: number = item.actual_q * item.selling_price;
+          return total + subtotal;
         },
-        0 as number
+        0
       );
 
       setBillAmount(newBillAmount);
@@ -245,6 +235,10 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
               dataIndex: "free_q",
             },
             {
+              title: "Price",
+              dataIndex: "selling_price",
+            },
+            {
               title: "Total",
               dataIndex: "quantity",
             },
@@ -276,7 +270,6 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
         openDrawer={openDrawer}
         productSelectProps={productSelectProps}
         challan={challan}
-        productsData={productsData}
         setChallan={setChallan}
         setOpenDrawer={setOpenDrawer}
       />
