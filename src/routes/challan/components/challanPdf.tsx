@@ -62,7 +62,7 @@ export const ChallanPdf = () => {
       const fetchProducts = async () => {
         const { data: products, error: productsError } = await supabaseClient
           .from("products")
-          .select("*")
+          .select("id, name")
           .in(
             "id",
             challanData?.data?.product_info &&
@@ -86,15 +86,9 @@ export const ChallanPdf = () => {
   useEffect(() => {
     if (billInfo && products) {
       const total = billInfo.reduce((total, item) => {
-        const product = products.find(
-          (product: { id: string }) => product.id === item.product_id
-        );
-        if (product) {
-          const subtotal = item.actual_q * (product.selling_price || 0);
-          const discountAmount = subtotal * (item.discount * 0.01 || 0);
-          return total + subtotal - discountAmount;
-        }
-        return total;
+        const subtotal = item.actual_q * (item.selling_price || 0);
+        const discountAmount = subtotal * (item.discount * 0.01 || 0);
+        return total + subtotal - discountAmount;
       }, 0);
       setTotalAmount(total);
     }
@@ -150,7 +144,13 @@ export const ChallanPdf = () => {
           <View style={styles.table}>
             <View style={styles.tableHeader}>
               <Text style={{ paddingHorizontal: 3 }}>#</Text>
-              <Text style={{ ...styles.tableHeaderItem, flex: 4.42}}>
+              <Text
+                style={{
+                  ...styles.tableHeaderItem,
+                  flex: 4.42,
+                  textAlign: "left",
+                }}
+              >
                 Item Name
               </Text>
               <Text style={styles.tableHeaderItem}>Quantity</Text>
@@ -176,23 +176,14 @@ export const ChallanPdf = () => {
                 <Text style={styles.tableCol}>{item.actual_q}</Text>
                 <Text style={styles.tableCol}>{item.free_q}</Text>
                 <Text style={styles.tableCol}>
-                  {
-                    products.find(
-                      (product: any) => product.id === item.product_id
-                    )?.selling_price
-                  }
+                  {item.selling_price?.toFixed(2)}
                 </Text>
                 <Text style={styles.tableCol}>{item.discount}%</Text>
                 <Text style={styles.tableCol}>
                   {(
+                    item.actual_q * item.selling_price -
                     item.actual_q *
-                      (products.find(
-                        (product: any) => product.id === item.product_id
-                      )?.selling_price || 0) -
-                    item.actual_q *
-                      (products.find(
-                        (product: any) => product.id === item.product_id
-                      )?.selling_price || 0) *
+                      item.selling_price *
                       (item.discount * 0.01 || 0)
                   ).toFixed(2)}
                 </Text>
@@ -355,7 +346,6 @@ const styles = StyleSheet.create({
   tableRow: {
     display: "flex",
     flexDirection: "row",
-    backgroundColor: "#f9f9f9",
   },
   tableCol: {
     flex: 1,
