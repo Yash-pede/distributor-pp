@@ -33,28 +33,16 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
   const [userFilters, setUserFilters] = React.useState<any>(null);
   const go = useGo();
 
-  const { data: Customers, isLoading: isLoadingCustomers } = useList<
-    Database["public"]["Tables"]["customers"]["Row"]
-  >({
-    resource: "customers",
-    filters: [
-      {
-        field: sales ? "sales_id" : "distributor_id",
-        operator: "eq",
-        value: User?.id,
-      },
-    ],
-  });
-
   const { tableProps, tableQueryResult, sorter, filters } = useTable<
     Database["public"]["Tables"]["challan"]["Row"]
   >({
+    resource: "challan",
     filters: {
       permanent: [
         {
-          field: "customer_id",
-          operator: "in",
-          value: Customers?.data?.map((item) => item.id),
+          field: sales ? "sales_id" : "distributor_id",
+          operator: "eq",
+          value: User?.id,
         },
       ],
     },
@@ -67,9 +55,10 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
       ],
     },
     queryOptions: {
-      enabled: !!User?.id && !isLoadingCustomers,
+      enabled: !!User?.id,
     },
   });
+
   useEffect(() => {
     if (tableQueryResult.data?.data) {
       filters.map((item: any) => {
@@ -159,38 +148,56 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
     form.resetFields();
     setIdToUpdateReceived(null);
   };
-  const { selectProps: customerSelectProps } = useSelect<
-    Database["public"]["Tables"]["customers"]["Row"]
-  >({
-    resource: "customers",
-    optionLabel: "full_name",
-    optionValue: "id",
-    filters: [
-      {
-        field: "id",
-        operator: "in",
-        value: tableQueryResult.data?.data
-          .filter((item) => item.customer_id)
-          .map((item) => item.customer_id),
+  const { selectProps: customerSelectProps, queryResult: Customers } =
+    useSelect<Database["public"]["Tables"]["customers"]["Row"]>({
+      resource: "customers",
+      optionLabel: "full_name",
+      optionValue: "id",
+      filters: [
+        {
+          field: "id",
+          operator: "in",
+          value: tableQueryResult.data?.data
+            .filter((item) => item.customer_id)
+            .map((item) => item.customer_id),
+        },
+      ],
+      queryOptions: {
+        enabled: !!tableQueryResult.data,
       },
-    ],
-    queryOptions: {
-      enabled: !!tableQueryResult.data,
-    },
-  });
+    });
 
   return (
     <List canCreate>
       <Flex justify="space-between" align="center" gap={2}>
-        <Text size="xl" style={{ marginBottom: 10 }}>
-          Total: {ChallansAmt?.data.reduce((a, b) => a + b.total_amt, 0)}
-        </Text>
-        <Text size="xl" style={{ marginBottom: 10 }}>
-          Pending: {ChallansAmt?.data.reduce((a, b) => a + b.pending_amt, 0)}
-        </Text>
-        <Text size="xl" style={{ marginBottom: 10 }}>
-          Received: {ChallansAmt?.data.reduce((a, b) => a + b.received_amt, 0)}
-        </Text>
+        {isFetchingChallansAmt ? (
+          <>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <Skeleton key={index} active paragraph={{ rows: 0 }} />
+          ))}
+          </>
+        ) : (
+          <>
+            <Text size="xl" style={{ marginBottom: 10 }}>
+              Total:{" "}
+              {ChallansAmt?.data
+                .reduce((a, b) => a + b.total_amt, 0)
+                .toFixed(2)}
+            </Text>
+            <Text size="xl" style={{ marginBottom: 10 }}>
+              Pending:{" "}
+              {ChallansAmt?.data
+                .reduce((a, b) => a + b.pending_amt, 0)
+                .toFixed(2)}
+            </Text>
+            <Text size="xl" style={{ marginBottom: 10 }}>
+              Received:{" "}
+              {ChallansAmt?.data
+                .reduce((a, b) => a + b.received_amt, 0)
+                .toFixed(2)}
+            </Text>
+          </>
+        )}
       </Flex>
       <Table {...tableProps} rowKey="id" bordered>
         <Table.Column
@@ -235,12 +242,13 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
             </FilterDropdown>
           )}
           render={(value) => {
-            if (isLoadingCustomers) return <Skeleton.Button />;
+            if (Customers.data?.data.length === 0) return <Skeleton.Button />;
             return (
               <Text>
                 {
-                  Customers?.data?.find((customer) => customer.id === value)
-                    ?.full_name
+                  Customers?.data?.data.find(
+                    (customer) => customer.id === value
+                  )?.full_name
                 }
               </Text>
             );
@@ -272,7 +280,7 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
         />
         <Table.Column
           title="Action"
-          render={(row,record) => (
+          render={(row, record) => (
             <div style={{ display: "flex", gap: "10px" }}>
               <Button
                 onClick={() => {
@@ -283,7 +291,15 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
                 Update
               </Button>
               <ShowButton recordItemId={row.id} hideText />
-              <Button type="primary" onClick={() => go({ to: `/challan/pdf/${record.id}`})} variant="link" color="default" icon><FilePdfFilled/> </Button>
+              <Button
+                type="primary"
+                onClick={() => go({ to: `/challan/pdf/${record.id}` })}
+                variant="link"
+                color="default"
+                icon
+              >
+                <FilePdfFilled />{" "}
+              </Button>
             </div>
           )}
         />
