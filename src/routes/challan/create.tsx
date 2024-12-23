@@ -100,27 +100,36 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
 
   const { mutate, isError } =
     useCreate<Database["public"]["Tables"]["challan"]["Insert"]>();
+
   useEffect(() => {
-    if (challan) {
-      const newTotalAmount: number = challan.reduce(
-        (total: number, item: any) => {
-          const subtotal: number = item.actual_q * item.selling_price;
-          const discountAmount: number = subtotal * (item.discount * 0.01 || 0);
-          return total + subtotal - discountAmount;
-        },
-        0
-      );
+    if (challan && challan.length > 0) {
+    
+      const newTotalAmount = challan.reduce((total: number, item: any) => {
+        const actualQuantity = item.actual_q || 0;
+        const sellingPrice = item.selling_price || 0;
+        const discount = item.discount || 0;
 
-      const newBillAmount: number = challan.reduce(
-        (total: number, item: any) => {
-          const subtotal: number = item.actual_q * item.selling_price;
-          return total + subtotal;
-        },
-        0
-      );
+        const subtotal = actualQuantity * sellingPrice;
+        const discountAmount = subtotal * (discount / 100);
 
-      setBillAmount(newBillAmount);
-      setTotalAmount(newTotalAmount);
+        return total + subtotal - discountAmount;
+      }, 0);
+
+    
+      const newBillAmount = challan.reduce((total: number, item: any) => {
+        const actualQuantity = item.actual_q || 0;
+        const sellingPrice = item.selling_price || 0;
+
+        return total + actualQuantity * sellingPrice;
+      }, 0);
+
+    
+      setBillAmount(parseFloat(newBillAmount.toFixed(2)));
+      setTotalAmount(parseFloat(newTotalAmount.toFixed(2)));
+    } else {
+    
+      setBillAmount(0);
+      setTotalAmount(0);
     }
   }, [challan]);
 
