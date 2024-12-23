@@ -101,7 +101,7 @@ export const ChallanPdf = () => {
       return <div>Loading...</div>;
     }
     return (
-      <Document>
+      <Document title={`Challan - ${challanId}`}>
         <Page size="A4" style={styles.page}>
           <View style={styles.invoiceHeader}>
             <View style={styles.companyInfo}>

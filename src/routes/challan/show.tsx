@@ -3,6 +3,7 @@ import { Database } from "@/utilities";
 import { StarOutlined } from "@ant-design/icons";
 import { Show, useModal, useTable } from "@refinedev/antd";
 import { useGo, useList, useOne } from "@refinedev/core";
+import { IconTrash } from "@tabler/icons-react";
 import { Button, Card, Modal, Skeleton, Space, Table } from "antd";
 import React from "react";
 import { useLocation } from "react-router-dom";
@@ -97,6 +98,7 @@ const go = useGo();
               <StarOutlined className="sm" />
               <Text size="xl">Challan: {challanId}</Text>
               <Button type="primary" onClick={() => go({ to: `/challan/pdf/${challanId}` })}>View Pdf</Button>
+              <Button type="default" variant="outlined" danger > <IconTrash/> Delete</Button>
             </Space>
           }
           headStyle={{
