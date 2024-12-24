@@ -30,7 +30,7 @@ import { AuthorizeUserRole } from "./components/layout/authorize";
 import { ShoppingCartProvider } from "./contexts/color-mode/cart/ShoppingCartContext";
 import { OrdersList, OrdersShow } from "./routes/orders";
 import { InventoryDetails, InventoryList } from "./routes/inventory";
-import { ChallanCreate, ChallanList, ChallanShow } from "./routes/challan";
+import { ChallanCreate, ChallanList, ChallanShow, ReqDeletionChallan } from "./routes/challan";
 import { CustomersCreate, CustomersList, CustomersShow } from "./routes/clients/customers";
 import { ChallanPdf } from "./routes/challan/components/challanPdf";
 import { FundsCreate, FundsList } from "./routes/funds";
@@ -102,6 +102,7 @@ function App() {
                       <Route path="/challan">
                         <Route index element={<ChallanList />} />
                         <Route path="create" element={<ChallanCreate />} />
+                        <Route path="req-deletion" element={<ReqDeletionChallan />} />
                         <Route path=":id" element={<ChallanShow />} />
                         <Route path="pdf/:id" element={<ChallanPdf />} />
                       </Route>

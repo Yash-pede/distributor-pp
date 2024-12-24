@@ -1,15 +1,16 @@
 import { Text } from "@/components";
 import { Database } from "@/utilities";
-import { StarOutlined } from "@ant-design/icons";
+import { Loading3QuartersOutlined, StarOutlined } from "@ant-design/icons";
 import { Show, useModal, useTable } from "@refinedev/antd";
-import { useGo, useList, useOne } from "@refinedev/core";
+import { useGo, useList, useOne, useUpdate } from "@refinedev/core";
+import { IconTrash } from "@tabler/icons-react";
 import { Button, Card, Modal, Skeleton, Space, Table } from "antd";
 import React from "react";
 import { useLocation } from "react-router-dom";
 
 export const ChallanShow = () => {
   const challanId = useLocation().pathname.split("/").pop();
-const go = useGo();
+  const go = useGo();
   const { data: challan, isLoading: isLoading } = useOne<
     Database["public"]["Tables"]["challan"]["Row"]
   >({
@@ -79,6 +80,11 @@ const go = useGo();
     },
   });
 
+  const { mutate, isLoading: updateingChallanStatus } = useUpdate({
+    id: challanId,
+    resource: "challan",
+  });
+
   const gridStyle: React.CSSProperties = {
     width: "100%",
     textAlign: "left",
@@ -96,7 +102,28 @@ const go = useGo();
             <Space size={15}>
               <StarOutlined className="sm" />
               <Text size="xl">Challan: {challanId}</Text>
-              <Button type="primary" onClick={() => go({ to: `/challan/pdf/${challanId}` })}>View Pdf</Button>
+              <Button
+                type="primary"
+                onClick={() => go({ to: `/challan/pdf/${challanId}` })}
+              >
+                View Pdf
+              </Button>
+              <Button
+                type="default"
+                variant="outlined"
+                danger
+                hidden={challan?.data.status !== "BILLED"}
+                onClick={() =>
+                  mutate({ id: challanId, values: { status: "REQ_DELETION" } })
+                }
+              >
+                {updateingChallanStatus ? (
+                  <Loading3QuartersOutlined />
+                ) : (
+                  <IconTrash />
+                )}
+                Delete
+              </Button>
             </Space>
           }
           headStyle={{
