@@ -6,9 +6,8 @@ DECLARE
     total_quantity bigint;
     has_transfers boolean;
 BEGIN
-    -- Check if status changed from REQ_DELETION to DELETED
     IF (OLD.status = 'REQ_DELETION' AND NEW.status = 'DELETED') THEN
-        -- Check for existing transfers
+        -- Check transfers
         SELECT EXISTS (
             SELECT 1 
             FROM transfers 
@@ -21,7 +20,7 @@ BEGIN
             RAISE EXCEPTION 'Cannot delete challan % as payments have been received', OLD.id;
         END IF;
 
-        -- Loop through each product in the challan's product_info
+        -- Process products
         FOR product_record IN 
             SELECT 
                 (p->>'product_id')::bigint AS product_id,
@@ -30,7 +29,7 @@ BEGIN
                 ((p->>'actual_q')::bigint + (p->>'free_q')::bigint) AS total_q
             FROM jsonb_array_elements(OLD.product_info) AS p
         LOOP
-            -- For each product, get its batch information
+            -- Process batches
             FOR batch_record IN 
                 SELECT 
                     b->>'batch_id' AS batch_id,
@@ -40,41 +39,39 @@ BEGIN
                 WHERE cbi.challan_id = OLD.id 
                 AND cbi.product_id = product_record.product_id
             LOOP
-                -- Proceed only if batch_id and quantity are valid
                 IF batch_record.batch_id IS NOT NULL AND batch_record.quantity IS NOT NULL THEN
-                    -- Calculate total quantity including both actual and free
-                    total_quantity := batch_record.quantity * 
-                        (product_record.actual_quantity + product_record.free_quantity)::float / 
-                        NULLIF(product_record.total_q, 0);
+                    -- Calculate quantity
+                    total_quantity := batch_record.quantity;
 
-                    -- Update or insert inventory
-                    IF EXISTS (
-                        SELECT 1 
-                        FROM inventory 
-                        WHERE distributor_id = OLD.distributor_id
-                        AND product_id = product_record.product_id
-                        AND batch_id = batch_record.batch_id
-                    ) THEN
+                    -- Update first matching inventory record only
+                    WITH updated AS (
                         UPDATE inventory
                         SET 
                             quantity = quantity + total_quantity,
                             updated_at = now()
-                        WHERE distributor_id = OLD.distributor_id
-                        AND product_id = product_record.product_id
-                        AND batch_id = batch_record.batch_id;
-                    ELSE
-                        INSERT INTO inventory (
-                            distributor_id,
-                            product_id,
-                            batch_id,
-                            quantity
-                        ) VALUES (
-                            OLD.distributor_id,
-                            product_record.product_id,
-                            batch_record.batch_id,
-                            total_quantity
-                        );
-                    END IF;
+                        WHERE id = (
+                            SELECT id 
+                            FROM inventory 
+                            WHERE distributor_id = OLD.distributor_id
+                            AND product_id = product_record.product_id
+                            AND batch_id = batch_record.batch_id
+                            ORDER BY id ASC
+                            LIMIT 1
+                        )
+                        RETURNING id
+                    )
+                    INSERT INTO inventory (
+                        distributor_id,
+                        product_id,
+                        batch_id,
+                        quantity
+                    )
+                    SELECT 
+                        OLD.distributor_id,
+                        product_record.product_id,
+                        batch_record.batch_id,
+                        total_quantity
+                    WHERE NOT EXISTS (SELECT 1 FROM updated);
                 END IF;
             END LOOP;
         END LOOP;
