@@ -4,19 +4,10 @@ DECLARE
     product_record RECORD;
     batch_record RECORD;
     total_quantity bigint;
-    has_transfers boolean;
 BEGIN
     IF (OLD.status = 'REQ_DELETION' AND NEW.status = 'DELETED') THEN
-        -- Check transfers
-        SELECT EXISTS (
-            SELECT 1 
-            FROM transfers 
-            WHERE status = 'Credit' 
-            AND from_user_id = OLD.distributor_id
-            AND description LIKE 'Transfer created after updating receiving in challan ' || OLD.id || '%'
-        ) INTO has_transfers;
-
-        IF has_transfers THEN
+        -- Check pending amount
+        IF OLD.pending_amt < OLD.total_amt THEN
             RAISE EXCEPTION 'Cannot delete challan % as payments have been received', OLD.id;
         END IF;
 
@@ -29,7 +20,6 @@ BEGIN
                 ((p->>'actual_q')::bigint + (p->>'free_q')::bigint) AS total_q
             FROM jsonb_array_elements(OLD.product_info) AS p
         LOOP
-            -- Process batches
             FOR batch_record IN 
                 SELECT 
                     b->>'batch_id' AS batch_id,
@@ -40,10 +30,8 @@ BEGIN
                 AND cbi.product_id = product_record.product_id
             LOOP
                 IF batch_record.batch_id IS NOT NULL AND batch_record.quantity IS NOT NULL THEN
-                    -- Calculate quantity
                     total_quantity := batch_record.quantity;
 
-                    -- Update first matching inventory record only
                     WITH updated AS (
                         UPDATE inventory
                         SET 
