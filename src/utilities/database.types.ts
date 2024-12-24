@@ -16,11 +16,11 @@ export type Database = {
           customer_id: number
           distributor_id: string
           id: number
-          is_deleted: boolean
           pending_amt: number
           product_info: Json
           received_amt: number
           sales_id: string | null
+          status: Database["public"]["Enums"]["challan_status"]
           total_amt: number
         }
         Insert: {
@@ -29,11 +29,11 @@ export type Database = {
           customer_id: number
           distributor_id: string
           id?: number
-          is_deleted?: boolean
           pending_amt: number
           product_info: Json
           received_amt: number
           sales_id?: string | null
+          status?: Database["public"]["Enums"]["challan_status"]
           total_amt: number
         }
         Update: {
@@ -42,11 +42,11 @@ export type Database = {
           customer_id?: number
           distributor_id?: string
           id?: number
-          is_deleted?: boolean
           pending_amt?: number
           product_info?: Json
           received_amt?: number
           sales_id?: string | null
+          status?: Database["public"]["Enums"]["challan_status"]
           total_amt?: number
         }
         Relationships: [
