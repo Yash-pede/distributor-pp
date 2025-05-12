@@ -18,9 +18,9 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
       },
       manifest: {
-        name: "Admin - PurePride",
-        short_name: "Admin - pp",
-        description: "Admin application for purepride",
+        name: "Distributor - PurePride",
+        short_name: "Distributor - pp",
+        description: "Distributor application for purepride",
         theme_color: "#ffffff",
         icons: [
           {
