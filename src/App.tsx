@@ -59,6 +59,13 @@ function App() {
                 liveMode: "auto",
               }}
             >
+             <DocumentTitleHandler
+                handler={(title) =>
+                  `${
+                    title.resource?.name ? title.resource?.name + "| " : ""
+                  } Admin Purepride`
+                }
+              />
               <ShoppingCartProvider>
                 <Routes>
                   <Route
@@ -182,7 +189,6 @@ function App() {
               </ShoppingCartProvider>
 
               <UnsavedChangesNotifier />
-              <DocumentTitleHandler />
             </Refine>
             <DevtoolsPanel />
           </DevtoolsProvider>
