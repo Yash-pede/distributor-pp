@@ -9,18 +9,35 @@ import {
   SaveButton,
   ShowButton,
   TextField,
-  getDefaultFilter,
   useEditableTable,
   useSelect,
 } from "@refinedev/antd";
-import { useExport, useGetIdentity, useGo, useList } from "@refinedev/core";
-import { Button, Flex, Form, Input, Select, Space, Table } from "antd";
+import {
+  getDefaultFilter,
+  useExport,
+  useGetIdentity,
+  useGo,
+  useList,
+} from "@refinedev/core";
+import {
+  Button,
+  Flex,
+  Form,
+  Grid,
+  Input,
+  Select,
+  Space,
+  Spin,
+  Table,
+} from "antd";
 import dayjs from "dayjs";
+import { debounce } from "lodash";
 import React from "react";
 
 export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
   const { data: User } = useGetIdentity<any>();
-  const go = useGo(); 
+  const screens = Grid.useBreakpoint();
+  const go = useGo();
   const {
     tableProps,
     formProps,
@@ -30,6 +47,8 @@ export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
     cancelButtonProps,
     editButtonProps,
     filters,
+    searchFormProps,
+    tableQueryResult,
   } = useEditableTable<Database["public"]["Tables"]["customers"]["Row"]>({
     resource: "customers",
     filters: {
@@ -40,6 +59,15 @@ export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
           value: User?.id,
         },
       ],
+    },
+    onSearch: (values: any) => {
+      return [
+        {
+          field: "full_name",
+          operator: "contains",
+          value: values.full_name,
+        },
+      ];
     },
     sorters: {
       initial: [
@@ -170,16 +198,45 @@ export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
     defaultValue: getDefaultFilter("profiles.username", filters, "in"),
   });
 
+  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    searchFormProps?.onFinish?.({
+      full_name: e.target.value ?? "",
+    });
+  };
+  const debouncedOnChange = debounce(onSearch, 500);
+
   return (
     <>
       <div>
         <List
-          headerButtons={
-            <>
-              <ExportButton onClick={triggerExport} loading={isLoading} />
-              <CreateButton />
-            </>
-          }
+          headerButtons={() => {
+            return (
+              <Space
+                style={{
+                  marginTop: screens.xs ? "1.6rem" : undefined,
+                }}
+              >
+                <Form {...searchFormProps} layout="inline">
+                  <Form.Item name="full_name" noStyle>
+                    <Input
+                      size="large"
+                      prefix={<SearchOutlined className="anticon tertiary" />}
+                      suffix={
+                        <Spin
+                          size="small"
+                          spinning={tableQueryResult.isFetching}
+                        />
+                      }
+                      placeholder="Search by full name"
+                      onChange={debouncedOnChange}
+                    />
+                  </Form.Item>
+                </Form>
+                <ExportButton onClick={triggerExport} loading={isLoading} />
+                <CreateButton />
+              </Space>
+            );
+          }}
         >
           <Form {...formProps}>
             <Table
@@ -199,6 +256,7 @@ export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
               <Table.Column<Database["public"]["Tables"]["customers"]["Row"]>
                 dataIndex="full_name"
                 title="Full Name"
+                defaultFilteredValue={getDefaultFilter("full_name", filters)}
                 filterIcon={<SearchOutlined />}
                 filterDropdown={(props) => (
                   <FilterDropdown {...props} mapValue={(value) => value}>
@@ -348,11 +406,11 @@ export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
                         hideText
                         size="small"
                       />
-                      <ShowButton
+                      {/* <ShowButton
                         size="small"
                         hideText
                         recordItemId={record.id}
-                      />
+                      /> */}
                       <Button
                         type="primary"
                         onClick={() =>

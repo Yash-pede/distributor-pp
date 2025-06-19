@@ -65,6 +65,14 @@ export const ProductsList: FC<PropsWithChildren> = ({ children }) => {
         },
       ],
     },
+    sorters:{
+      initial: [
+        {
+          field:"id",
+          order:"desc"
+        }
+      ]
+    },
     onSearch: (values) => {
       return [
         {

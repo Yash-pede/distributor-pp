@@ -18,6 +18,16 @@ export const ShoppingCart = ({ isOpen }: { isOpen: boolean }) => {
   const { cartItems, closeCart, clearCart } = useShoppingCart();
   const { data } = useList<Database["public"]["Tables"]["products"]["Row"]>({
     resource: "products",
+    filters: [
+      {
+        field: "id",
+        operator: "in",
+        value: cartItems.map((item) => item.id),
+      },
+    ],
+    queryOptions: {
+      enabled: cartItems.length > 0,
+    },
   });
   const { mutate, error } = useCreate();
   const HandleCheckout = async () => {
@@ -33,7 +43,7 @@ export const ShoppingCart = ({ isOpen }: { isOpen: boolean }) => {
           typeof item.quantity !== "number" ||
           item.quantity <= 0
       );
-  
+
       if (hasInvalidQuantity) {
         throw new Error("Invalid quantity detected. Please check your cart.");
       }
@@ -85,6 +95,7 @@ export const ShoppingCart = ({ isOpen }: { isOpen: boolean }) => {
       </Button>
       {cartItems.length > 0 ? (
         <>
+          loda
           <Col span={24}>
             {cartItems.map((item) => (
               <ShoppingCartItem key={item.id} products={data?.data} {...item} />
