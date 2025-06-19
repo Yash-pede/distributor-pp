@@ -63,7 +63,7 @@ function App() {
                 handler={(title) =>
                   `${
                     title.resource?.name ? title.resource?.name + "| " : ""
-                  } Admin Purepride`
+                  } Distributor Purepride`
                 }
               />
               <ShoppingCartProvider>
