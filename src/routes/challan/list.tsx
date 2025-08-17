@@ -342,7 +342,11 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
             rules={[
               {
                 required: true,
-                min: 1,
+                min: -(
+                  tableQueryResult.data?.data.find(
+                    (item) => item.id === IdToUpdateReceived
+                  )?.received_amt ?? 0
+                ),
                 type: "number",
                 message: "Please enter a valid received amount",
                 max: tableQueryResult.data?.data.find(

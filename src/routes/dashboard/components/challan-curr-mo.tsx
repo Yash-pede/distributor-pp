@@ -43,7 +43,7 @@ export const ChallanCurrentMonth = ({ userId }: { userId: string }) => {
   });
   const totalAmount = totalChallansCount?.data
     .map((d) => d.bill_amt)
-    .reduce((a, b) => a + b, 0);
+    .reduce((a, b) => a + b, 0).toFixed(2);
 
   const textSize = totalAmount
     ? totalAmount.toString().length > 2

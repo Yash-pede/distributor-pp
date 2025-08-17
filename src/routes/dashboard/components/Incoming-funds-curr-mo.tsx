@@ -46,7 +46,7 @@ const IncomingFundsCurrentMonth = ({ userId }: { userId: string }) => {
   });
   const totalAmount = totalTransfersCount?.data
     ?.map((d) => d.amount)
-    ?.reduce((a, b) => a + b, 0);
+    ?.reduce((a, b) => a + b, 0).toFixed(2);
 
   const textSize = totalAmount
     ? totalAmount.toString().length > 2
