@@ -4503,6 +4503,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -5354,7 +5355,7 @@ snapshots:
     dependencies:
       '@babel/compat-data': 7.27.2
       '@babel/helper-validator-option': 7.27.1
-      browserslist: 4.24.2
+      browserslist: 4.24.5
       lru-cache: 5.1.1
       semver: 6.3.1
 
@@ -6089,7 +6090,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.25.9
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/types': 7.25.9
+      '@babel/types': 7.27.1
       esutils: 2.0.3
 
   '@babel/preset-typescript@7.25.9(@babel/core@7.25.9)':
@@ -7043,7 +7044,7 @@ snapshots:
   '@rollup/plugin-babel@5.3.1(@babel/core@7.25.9)(@types/babel__core@7.20.5)(rollup@2.79.2)':
     dependencies:
       '@babel/core': 7.25.9
-      '@babel/helper-module-imports': 7.25.9
+      '@babel/helper-module-imports': 7.27.1
       '@rollup/pluginutils': 3.1.0(rollup@2.79.2)
       rollup: 2.79.2
     optionalDependencies:
@@ -7708,7 +7709,7 @@ snapshots:
   call-bind@1.0.8:
     dependencies:
       call-bind-apply-helpers: 1.0.2
-      es-define-property: 1.0.0
+      es-define-property: 1.0.1
       get-intrinsic: 1.3.0
       set-function-length: 1.2.2
 

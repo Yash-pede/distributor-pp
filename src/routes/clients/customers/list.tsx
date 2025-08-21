@@ -294,31 +294,6 @@ export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
                 }}
               />
               <Table.Column<Database["public"]["Tables"]["customers"]["Row"]>
-                dataIndex="email"
-                title="Email"
-                filterIcon={<SearchOutlined />}
-                filterDropdown={(props) => (
-                  <FilterDropdown {...props} mapValue={(value) => value}>
-                    <Select
-                      style={{ minWidth: 200 }}
-                      mode="multiple"
-                      {...selectEmailProps}
-                    />
-                  </FilterDropdown>
-                )}
-                render={(value, record) => {
-                  if (isEditing(record.id)) {
-                    return (
-                      <Form.Item name="email" style={{ margin: 0 }}>
-                        <Input />
-                      </Form.Item>
-                    );
-                  }
-                  return <TextField value={value} />;
-                }}
-              />
-
-              <Table.Column<Database["public"]["Tables"]["customers"]["Row"]>
                 dataIndex="phone"
                 title="Phone"
                 filterIcon={<SearchOutlined />}
@@ -380,7 +355,21 @@ export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
                   );
                 }}
               />
-
+              <Table.Column<Database["public"]["Tables"]["customers"]["Row"]>
+                dataIndex="total_amt"
+                title="Total"
+                render={(value) => <div>{value}</div>}
+              />
+              <Table.Column<Database["public"]["Tables"]["customers"]["Row"]>
+                dataIndex="pending_amt"
+                title="Pending"
+                render={(value) => <div>{value}</div>}
+              />
+              <Table.Column<Database["public"]["Tables"]["customers"]["Row"]>
+                dataIndex="received_amt"
+                title="Received"
+                render={(value) => <div>{value}</div>}
+              />
               <Table.Column<Database["public"]["Tables"]["customers"]["Row"]>
                 title="Actions"
                 dataIndex="actions"
