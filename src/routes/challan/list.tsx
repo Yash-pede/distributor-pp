@@ -1,16 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  Button,
-  Flex,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Select,
-  Skeleton,
-  Table,
-  Typography,
-} from "antd";
+import { Button, Flex, Form, Input, InputNumber, Modal, Select, Skeleton, Table, Typography } from "antd";
 import {
   CreateButton,
   DateField,
@@ -22,30 +11,29 @@ import {
   useSelect,
   useTable,
 } from "@refinedev/antd";
-import { useGetIdentity, useGo, useList, useUpdate } from "@refinedev/core";
-import FormItem from "antd/lib/form/FormItem";
+import { useGetIdentity, useList, useOne, useUpdate } from "@refinedev/core";
 import {
   FilePdfFilled,
   PullRequestOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { Database } from "@/utilities";
-import { Text } from "@/components";
+import { PaginationTotal, Text } from "@/components";
+import { useGo } from "@refinedev/core";
+import FormItem from "antd/lib/form/FormItem";
 
-export const ChallanList = ({ sales }: { sales?: boolean }) => {
-  const [IdToUpdateReceived, setIdToUpdateReceived] = React.useState<any>(null);
+export const ChallanList = () => {
+    const [IdToUpdateReceived, setIdToUpdateReceived] = React.useState<any>(null);
   const { data: User } = useGetIdentity<any>();
-  const [userFilters, setUserFilters] = React.useState<any>(null);
   const go = useGo();
-
+  const [userFilters, setUserFilters] = React.useState<{ userType?: string; userId?: string } | null>(null);
   const { tableProps, tableQueryResult, sorter, filters } = useTable<
     Database["public"]["Tables"]["challan"]["Row"]
   >({
-    resource: "challan",
     filters: {
       permanent: [
         {
-          field: sales ? "sales_id" : "distributor_id",
+          field: "distributor_id",
           operator: "eq",
           value: User?.id,
         },
@@ -63,20 +51,17 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
           order: "desc",
         },
       ],
-    },
-    queryOptions: {
+    }, queryOptions: {
       enabled: !!User?.id,
     },
   });
-
   useEffect(() => {
     if (tableQueryResult.data?.data) {
+
       filters.map((item: any) => {
         if (
-          (item.field === "customer_id" ||
-            item.field === "sales_id" ||
-            item.field === "distributor_id") &&
-          item.operator === "eq"
+          item.field === "customer_id" ||
+          item.field === "sales_id"
         ) {
           setUserFilters({
             userType: item.field,
@@ -86,44 +71,40 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
       });
     }
   }, [tableQueryResult.data?.data]);
-  const { data: ChallansAmt, isFetching: isFetchingChallansAmt } = useList<
-    Database["public"]["Tables"]["challan"]["Row"]
+
+const { data: ChallansAmt, isLoading: isLoadingChallansAmt } = useOne({
+  resource: userFilters?.userType === "customer_id" ? "customers" : "funds",
+  id: userFilters ? userFilters.userId : User.id,
+  queryOptions: {
+    enabled: !!tableQueryResult.data,
+  },
+});
+  const { selectProps: salesSelectProps } = useSelect<
+    Database["public"]["Tables"]["profiles"]["Row"]
   >({
-    resource: "challan",
-    pagination: {
-      current: 1,
-      pageSize: 1000,
-    },
-    filters: userFilters
-      ? [
-          {
-            field: userFilters.userType,
-            operator: "eq",
-            value: userFilters.userId,
-          },
-          {
-            field: "distributor_id",
-            operator: "eq",
-            value: User?.id,
-          },
-        ]
-      : [
-          {
-            field: "distributor_id",
-            operator: "eq",
-            value: User?.id,
-          },
-        ],
-    queryOptions: {
-      meta: {
-        select: "id, total_amt, received_amt, pending_amt",
+    resource: "profiles",
+    optionLabel: "full_name",
+    optionValue: "id",
+    filters: [
+      {
+        field: "role",
+        operator: "eq",
+        value: "sales",
       },
+    ],
+    queryOptions: {
+      enabled: !!tableQueryResult.data,
     },
   });
+
   const { data: profiles, isLoading: isProfileLoading } = useList<
     Database["public"]["Tables"]["profiles"]["Row"]
   >({
     resource: "profiles",
+    pagination: {
+      current: 1,
+      pageSize: 100000,
+    },
     filters: [
       {
         field: "id",
@@ -140,6 +121,7 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
       enabled: !!tableQueryResult.data,
     },
   });
+
   const [form] = Form.useForm();
   const { close, modalProps, show } = useModal();
   const { mutate, isLoading } = useUpdate<any>();
@@ -177,6 +159,7 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
       },
     });
 
+
   return (
     <List
       canCreate
@@ -188,7 +171,7 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
       ]}
     >
       <Flex justify="space-between" align="center" gap={2}>
-        {isFetchingChallansAmt ? (
+         {isLoadingChallansAmt ? (
           <>
             {Array.from({ length: 3 }).map((_, index) => (
               <Skeleton key={index} active paragraph={{ rows: 0 }} />
@@ -196,28 +179,32 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
           </>
         ) : (
           <>
-            <Text size="xl" style={{ marginBottom: 10 }}>
-              Total:{" "}
-              {ChallansAmt?.data
-                .reduce((a, b) => a + b.total_amt, 0)
-                .toFixed(2)}
-            </Text>
-            <Text size="xl" style={{ marginBottom: 10 }}>
-              Pending:{" "}
-              {ChallansAmt?.data
-                .reduce((a, b) => a + b.pending_amt, 0)
-                .toFixed(2)}
-            </Text>
-            <Text size="xl" style={{ marginBottom: 10 }}>
-              Received:{" "}
-              {ChallansAmt?.data
-                .reduce((a, b) => a + b.received_amt, 0)
-                .toFixed(2)}
-            </Text>
-          </>
+        <Text size="xl" style={{ marginBottom: 10 }}>
+          Total:{" "}
+          {ChallansAmt?.data.total_amt}
+        </Text>
+        <Text size="xl" style={{ marginBottom: 10 }}>
+          Pending:{" "}
+          {ChallansAmt?.data.pending_amt}
+        </Text>
+        <Text size="xl" style={{ marginBottom: 10 }}>
+          Received:{" "}
+          {ChallansAmt?.data.received_amt}
+        </Text> </>
         )}
       </Flex>
-      <Table {...tableProps} rowKey="id" bordered>
+      <Table
+        {...tableProps}
+        rowKey="id"
+        bordered
+        pagination={{
+          ...tableProps.pagination,
+          pageSizeOptions: ["12", "24", "48", "96"],
+          showTotal: (total) => (
+            <PaginationTotal total={total} entityName="challans" />
+          ),
+        }}
+      >
         <Table.Column
           sorter={{ multiple: 2 }}
           defaultSortOrder={getDefaultSortOrder("id", sorter)}
@@ -260,7 +247,7 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
             </FilterDropdown>
           )}
           render={(value) => {
-            if (Customers.data?.data.length === 0) return <Skeleton.Button />;
+              if (Customers.data?.data.length === 0) return <Skeleton.Button />;
             return (
               <Text>
                 {
@@ -277,6 +264,12 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
           defaultSortOrder={getDefaultSortOrder("sales_id", sorter)}
           dataIndex="sales_id"
           title="sales"
+          filterIcon={<SearchOutlined />}
+          filterDropdown={(props) => (
+            <FilterDropdown {...props} mapValue={(value) => value}>
+              <Select {...salesSelectProps} style={{ width: 200 }} />
+            </FilterDropdown>
+          )}
           render={(value) => {
             if (isProfileLoading) return <Skeleton.Button />;
             return (
@@ -300,7 +293,7 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
           title="Action"
           render={(row, record) => (
             <div style={{ display: "flex", gap: "10px" }}>
-              <Button
+                <Button
                 onClick={() => {
                   setIdToUpdateReceived(row.id);
                   show();
@@ -322,7 +315,7 @@ export const ChallanList = ({ sales }: { sales?: boolean }) => {
           )}
         />
       </Table>
-      <Modal
+       <Modal
         open={IdToUpdateReceived !== null}
         okButtonProps={{ onClick: () => form.submit(), htmlType: "submit" }}
         onCancel={() => {

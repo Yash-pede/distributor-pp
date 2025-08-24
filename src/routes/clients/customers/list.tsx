@@ -151,20 +151,6 @@ export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
     defaultValue: getDefaultFilter("customers.full_name", filters, "in"),
   });
 
-  const { selectProps: selectEmailProps } = useSelect({
-    resource: "customers",
-    optionLabel: "email",
-    optionValue: "email",
-    filters: [
-      {
-        field: "distributor_id",
-        operator: "eq",
-        value: User?.id,
-      },
-    ],
-    defaultValue: getDefaultFilter("customers.email", filters, "in"),
-  });
-
   const { selectProps: selectPhoneProps } = useSelect({
     resource: "customers",
     optionLabel: "phone",
