@@ -24,14 +24,14 @@ import { Layout } from "./components/layout";
 import { ProductsList, ProductsEdit } from "./routes/products";
 import { auditLogProvider } from "./utilities/providers/auditlogProvider";
 
-import { SalesCreate, SalesEdit, SalesList, SalesShow } from "./routes/clients/sales";
+import { SalesChallans, SalesCreate, SalesEdit, SalesList, SalesShow } from "./routes/clients/sales";
 import { AuditLogList } from "./routes/audit-log";
 import { AuthorizeUserRole } from "./components/layout/authorize";
 import { ShoppingCartProvider } from "./contexts/color-mode/cart/ShoppingCartContext";
 import { OrdersList, OrdersShow } from "./routes/orders";
 import { InventoryDetails, InventoryList } from "./routes/inventory";
 import { ChallanCreate, ChallanList, ChallanShow, ReqDeletionChallan } from "./routes/challan";
-import { CustomersCreate, CustomersList, CustomersShow } from "./routes/clients/customers";
+import { CustomersChallans, CustomersCreate, CustomersList, CustomersShow } from "./routes/clients/customers";
 import { ChallanPdf } from "./routes/challan/components/challanPdf";
 import { FundsCreate, FundsList } from "./routes/funds";
 import { TargetCreate } from "./components/targets/create";
@@ -119,10 +119,12 @@ function App() {
                           <Route index element={<SalesList />} />
                           <Route path="create" element={<SalesCreate />} />
                           <Route path="edit/:id" element={<SalesEdit />} />
+                          <Route path="challans/:id" element={< SalesChallans/>} />
                           <Route path=":id" element={<SalesShow />} />
                         </Route>
                         <Route path="customers">
                           <Route index element={<CustomersList />} />
+                          <Route path="challans/:id" element={<CustomersChallans />} />
                           <Route path="create" element={<CustomersCreate />} />
                           <Route path=":id" element={<CustomersShow />} />
                         </Route>

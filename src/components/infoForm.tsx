@@ -1,7 +1,7 @@
 import { Text } from "@/components";
 import { Database } from "@/utilities";
 import { ShopOutlined } from "@ant-design/icons";
-import { DateField, useModal } from "@refinedev/antd";
+import { DateField } from "@refinedev/antd";
 import { useGo, useList, useOne } from "@refinedev/core";
 import { Button, Card, Flex, Skeleton, Space } from "antd";
 import dayjs from "dayjs";
@@ -19,7 +19,6 @@ export const UserInfoForm = (props: Props) => {
     width: "100%",
     textAlign: "left",
   };
-  const { show, close, modalProps } = useModal();
   const { data: distributorDetails, isLoading } = useOne<
     Database["public"]["Tables"]["profiles"]["Row"]
   >({
@@ -77,16 +76,7 @@ export const UserInfoForm = (props: Props) => {
               type="primary"
               onClick={() =>
                 go({
-                  to: `/challan`,
-                  query: {
-                    filters: [
-                      {
-                        field: props.sales ? "sales_id" : "distributor_id",
-                        operator: "eq",
-                        value: props.userDetails.id,
-                      },
-                    ],
-                  },
+                  to: `/clients/sales/challans/${props.userDetails.id}`,
                 })
               }
             >

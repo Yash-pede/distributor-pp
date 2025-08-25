@@ -390,16 +390,7 @@ export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
                         type="primary"
                         onClick={() =>
                           go({
-                            to: `/challan`,
-                            query: {
-                              filters: [
-                                {
-                                  field: "customer_id",
-                                  operator: "eq",
-                                  value: JSON.parse(JSON.stringify(record)).id,
-                                },
-                              ],
-                            },
+                            to: `/clients/customers/challans/${record.id}`,
                           })
                         }
                       >
