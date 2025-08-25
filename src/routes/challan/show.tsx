@@ -4,11 +4,16 @@ import { Loading3QuartersOutlined, StarOutlined } from "@ant-design/icons";
 import { Show, useModal, useTable } from "@refinedev/antd";
 import { useGo, useList, useOne, useUpdate } from "@refinedev/core";
 import { IconTrash } from "@tabler/icons-react";
-import { Button, Card, Modal, Skeleton, Space, Table } from "antd";
+import { Button, Card, Flex, Grid, Modal, Skeleton, Space, Table } from "antd";
 import React from "react";
 import { useLocation } from "react-router-dom";
 
 export const ChallanShow = () => {
+  const breakpoint = Grid.useBreakpoint();
+
+  const isMobile =
+    typeof breakpoint.lg === "undefined" ? false : !breakpoint.lg;
+
   const challanId = useLocation().pathname.split("/").pop();
   const go = useGo();
   const { data: challan, isLoading: isLoading } = useOne<
@@ -99,9 +104,17 @@ export const ChallanShow = () => {
       ) : (
         <Card
           title={
-            <Space size={15}>
+            <Flex
+              gap={10}
+              style={{
+                flexDirection: isMobile ? "column" : "row",
+                alignItems: "flex-start",
+              }}
+            >
+              <Flex gap={10} align="center">
               <StarOutlined className="sm" />
               <Text size="xl">Challan: {challanId}</Text>
+              </Flex>
               <Button
                 type="primary"
                 onClick={() => go({ to: `/challan/pdf/${challanId}` })}
@@ -124,7 +137,7 @@ export const ChallanShow = () => {
                 )}
                 Delete
               </Button>
-            </Space>
+            </Flex>
           }
           headStyle={{
             padding: "1rem",

@@ -1,13 +1,21 @@
 import { reportTypes } from "@/utilities/constants";
 import { Show } from "@refinedev/antd";
-import { Card, Space } from "antd";
+import { Card, Flex, Grid, Space } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
 
 export const ReportsList = () => {
+  const breakpoint = Grid.useBreakpoint();
+
+  const isMobile =
+    typeof breakpoint.lg === "undefined" ? false : !breakpoint.lg;
+
   return (
     <Show>
-      <Space size="large">
+      <Flex style={{
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: isMobile ? "flex-start" : "center",
+        }} gap={20}>
         {reportTypes.map((reportType, i) => (
           <Link key={i} to={reportType.link}>
             <Card
@@ -26,7 +34,7 @@ export const ReportsList = () => {
             </Card>
           </Link>
         ))}
-      </Space>
+      </Flex>
     </Show>
   );
 };

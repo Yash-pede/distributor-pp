@@ -78,6 +78,7 @@ export const  SalesTableView: FC<Props> = ({
       <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
         dataIndex="username"
         title="Name"
+        minWidth={150}
         defaultFilteredValue={getDefaultFilter("username", filters)}
         filterIcon={<SearchOutlined />}
         filterDropdown={(props) => (
@@ -87,19 +88,21 @@ export const  SalesTableView: FC<Props> = ({
         )}
         render={(value) => <div>{value}</div>}
       />
-      <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
+      {/* <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
         dataIndex="email"
         title="email"
         render={(value) => <div>{value}</div>}
-      />
+      /> */}
       <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
         dataIndex="full_name"
         title="Full Name"
+        minWidth={150}
         render={(value) => <div>{value}</div>}
       />
       <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
         dataIndex="phone"
         title="phone"
+        minWidth={150}
         render={(value) => <TextField value={"+91 " + value} />}
       />
       <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
@@ -108,7 +111,7 @@ export const  SalesTableView: FC<Props> = ({
         render={(value) => value}
       />
       <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
-        fixed="right"
+        // fixed="right"
         dataIndex="id"
         title="Actions"
         render={(value, row) => (

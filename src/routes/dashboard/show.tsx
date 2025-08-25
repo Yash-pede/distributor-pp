@@ -30,7 +30,7 @@ const DashboardHome = () => {
           marginTop: "32px",
         }}
       >
-        <Col
+        {/* <Col
           xs={24}
           sm={24}
           xl={8}
@@ -39,7 +39,7 @@ const DashboardHome = () => {
           }}
         >
           <ProductsChart />
-        </Col>
+        </Col> */}
         <Col
           xs={24}
           sm={24}

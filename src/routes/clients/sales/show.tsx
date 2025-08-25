@@ -1,4 +1,4 @@
-import { Col, Row, Skeleton } from "antd";
+import { Col, Divider, Flex, Grid, Row, Skeleton } from "antd";
 
 import { SalesTitleForm } from "./components/SalesTitleForm";
 import { CustomerTable } from "./components/customer-table";
@@ -8,13 +8,13 @@ import { Database } from "@/utilities";
 import { UserActivitesTable } from "@/components/UserActivitesTable";
 import { UserInfoForm } from "@/components/infoForm";
 
-export const    SalesShow = ({
-  children,
-}: {
-  children?: React.ReactNode;
-}) => {
+export const SalesShow = ({ children }: { children?: React.ReactNode }) => {
   const pathname = useLocation().pathname;
   const salesId = pathname.split("/").pop();
+  const breakpoint = Grid.useBreakpoint();
+
+  const isMobile =
+    typeof breakpoint.lg === "undefined" ? false : !breakpoint.lg;
 
   const {
     data: salesDetails,
@@ -31,16 +31,13 @@ export const    SalesShow = ({
   if (isLoading || isError || !salesDetails.data) return <Skeleton />;
 
   return (
-    <div className="page-container">
+    <Flex style={{flexDirection:"column"}} gap={20} className="page-container">
       <SalesTitleForm salesDetails={salesDetails.data} />
-      <Row
-        gutter={[32, 32]}
-        style={{
-          marginTop: 32,
-        }}
-      >
-        <Col span={16}>
+      {isMobile ? (
+        <Col >
           <CustomerTable salesDetails={salesDetails.data} />
+          <Divider />
+          <UserInfoForm userDetails={salesDetails.data} />
           <UserActivitesTable
             userId={salesDetails.data.id}
             style={{
@@ -48,11 +45,29 @@ export const    SalesShow = ({
             }}
           />
         </Col>
-        <Col span={8}>
-          <UserInfoForm userDetails={salesDetails.data} />
-        </Col>
-      </Row>
+      ) : (
+        <Row
+          gutter={[32, 32]}
+          style={{
+            marginTop: 32,
+          }}
+        >
+          <Col span={16}>
+            <CustomerTable salesDetails={salesDetails.data} />
+            <UserActivitesTable
+              userId={salesDetails.data.id}
+              style={{
+                marginTop: 32,
+              }}
+            />
+          </Col>
+          <Col span={8}>
+            <UserInfoForm userDetails={salesDetails.data} />
+          </Col>
+        </Row>
+      )}
+
       {children}
-    </div>
+    </Flex>
   );
 };

@@ -1,5 +1,17 @@
 import React, { useEffect } from "react";
-import { Button, Flex, Form, Input, InputNumber, Modal, Select, Skeleton, Table, Typography } from "antd";
+import {
+  Button,
+  Flex,
+  Form,
+  Grid,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
+  Skeleton,
+  Table,
+  Typography,
+} from "antd";
 import {
   CreateButton,
   DateField,
@@ -23,10 +35,18 @@ import { useGo } from "@refinedev/core";
 import FormItem from "antd/lib/form/FormItem";
 
 export const ChallanList = () => {
-    const [IdToUpdateReceived, setIdToUpdateReceived] = React.useState<any>(null);
+  const [IdToUpdateReceived, setIdToUpdateReceived] = React.useState<any>(null);
   const { data: User } = useGetIdentity<any>();
   const go = useGo();
-  const [userFilters, setUserFilters] = React.useState<{ userType?: string; userId?: string } | null>(null);
+  const [userFilters, setUserFilters] = React.useState<{
+    userType?: string;
+    userId?: string;
+  } | null>(null);
+  const breakpoint = Grid.useBreakpoint();
+
+  const isMobile =
+    typeof breakpoint.lg === "undefined" ? false : !breakpoint.lg;
+
   const { tableProps, tableQueryResult, sorter, filters } = useTable<
     Database["public"]["Tables"]["challan"]["Row"]
   >({
@@ -51,18 +71,15 @@ export const ChallanList = () => {
           order: "desc",
         },
       ],
-    }, queryOptions: {
+    },
+    queryOptions: {
       enabled: !!User?.id,
     },
   });
   useEffect(() => {
     if (tableQueryResult.data?.data) {
-
       filters.map((item: any) => {
-        if (
-          item.field === "customer_id" ||
-          item.field === "sales_id"
-        ) {
+        if (item.field === "customer_id" || item.field === "sales_id") {
           setUserFilters({
             userType: item.field,
             userId: item.value,
@@ -72,13 +89,13 @@ export const ChallanList = () => {
     }
   }, [tableQueryResult.data?.data]);
 
-const { data: ChallansAmt, isLoading: isLoadingChallansAmt } = useOne({
-  resource: userFilters?.userType === "customer_id" ? "customers" : "funds",
-  id: userFilters ? userFilters.userId : User.id,
-  queryOptions: {
-    enabled: !!tableQueryResult.data,
-  },
-});
+  const { data: ChallansAmt, isLoading: isLoadingChallansAmt } = useOne({
+    resource: userFilters?.userType === "customer_id" ? "customers" : "funds",
+    id: userFilters ? userFilters.userId : User.id,
+    queryOptions: {
+      enabled: !!tableQueryResult.data,
+    },
+  });
   const { selectProps: salesSelectProps } = useSelect<
     Database["public"]["Tables"]["profiles"]["Row"]
   >({
@@ -159,7 +176,6 @@ const { data: ChallansAmt, isLoading: isLoadingChallansAmt } = useOne({
       },
     });
 
-
   return (
     <List
       canCreate
@@ -170,8 +186,16 @@ const { data: ChallansAmt, isLoading: isLoadingChallansAmt } = useOne({
         </Button>,
       ]}
     >
-      <Flex justify="space-between" align="center" gap={2}>
-         {isLoadingChallansAmt ? (
+      <Flex
+        justify="space-between"
+        align="center"
+        gap={2}
+        style={{
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: isMobile ? "flex-start" : "center",
+        }}
+      >
+        {isLoadingChallansAmt ? (
           <>
             {Array.from({ length: 3 }).map((_, index) => (
               <Skeleton key={index} active paragraph={{ rows: 0 }} />
@@ -179,18 +203,16 @@ const { data: ChallansAmt, isLoading: isLoadingChallansAmt } = useOne({
           </>
         ) : (
           <>
-        <Text size="xl" style={{ marginBottom: 10 }}>
-          Total:{" "}
-          {ChallansAmt?.data.total_amt}
-        </Text>
-        <Text size="xl" style={{ marginBottom: 10 }}>
-          Pending:{" "}
-          {ChallansAmt?.data.pending_amt}
-        </Text>
-        <Text size="xl" style={{ marginBottom: 10 }}>
-          Received:{" "}
-          {ChallansAmt?.data.received_amt}
-        </Text> </>
+            <Text size="xl" style={{ marginBottom: 10 }}>
+              Total: {ChallansAmt?.data.total_amt}
+            </Text>
+            <Text size="xl" style={{ marginBottom: 10 }}>
+              Pending: {ChallansAmt?.data.pending_amt}
+            </Text>
+            <Text size="xl" style={{ marginBottom: 10 }}>
+              Received: {ChallansAmt?.data.received_amt}
+            </Text>{" "}
+          </>
         )}
       </Flex>
       <Table
@@ -247,7 +269,7 @@ const { data: ChallansAmt, isLoading: isLoadingChallansAmt } = useOne({
             </FilterDropdown>
           )}
           render={(value) => {
-              if (Customers.data?.data.length === 0) return <Skeleton.Button />;
+            if (Customers.data?.data.length === 0) return <Skeleton.Button />;
             return (
               <Text>
                 {
@@ -293,7 +315,7 @@ const { data: ChallansAmt, isLoading: isLoadingChallansAmt } = useOne({
           title="Action"
           render={(row, record) => (
             <div style={{ display: "flex", gap: "10px" }}>
-                <Button
+              <Button
                 onClick={() => {
                   setIdToUpdateReceived(row.id);
                   show();
@@ -315,7 +337,7 @@ const { data: ChallansAmt, isLoading: isLoadingChallansAmt } = useOne({
           )}
         />
       </Table>
-       <Modal
+      <Modal
         open={IdToUpdateReceived !== null}
         okButtonProps={{ onClick: () => form.submit(), htmlType: "submit" }}
         onCancel={() => {

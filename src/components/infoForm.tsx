@@ -59,8 +59,12 @@ export const UserInfoForm = (props: Props) => {
     id: props.userDetails.id,
   });
   return (
-    <>
       <Card
+        headStyle={{
+          borderBottom: "1px solid #D9D9D9",
+          marginBottom: "1px",
+          marginTop: "20px",
+        }}
         title={
           <Flex
             gap="xl"
@@ -84,9 +88,6 @@ export const UserInfoForm = (props: Props) => {
             </Button>
           </Flex>
         }
-        headStyle={{
-          padding: "1rem",
-        }}
         bodyStyle={{
           padding: "0",
         }}
@@ -192,6 +193,5 @@ export const UserInfoForm = (props: Props) => {
           </Space>
         </Card.Grid>
       </Card>
-    </>
   );
 };

@@ -156,25 +156,18 @@ export const CustomerTable = ({
           <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
             title="Name"
             dataIndex="full_name"
-            render={(value) => <Text>{value}</Text>}
-          />
-          <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
-            title="Email"
-            dataIndex="email"
-            render={(value) => <Text>{value}</Text>}
-          />
-          <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
-            title="Username"
-            dataIndex="username"
+            minWidth={150}
             render={(value) => <Text>{value}</Text>}
           />
           <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
             title="Phone"
             dataIndex="phone"
+            minWidth={150}
             render={(value) => <Text>{value}</Text>}
           />
           <Table.Column<Database["public"]["Tables"]["profiles"]["Row"]>
             title="Created at"
+            minWidth={150}
             dataIndex="created_at"
             render={(value) => <DateField value={value} format="LLL" />}
           />

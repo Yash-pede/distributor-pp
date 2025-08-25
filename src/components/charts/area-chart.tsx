@@ -6,7 +6,7 @@ import {
 const TinyAreaChart = ({ data, dataKey }: { data: Array<any>; dataKey: string }) => {
   return (
     <AreaChart
-      width={200}
+      width={150}
       height={55}
       data={data}
       margin={{

@@ -90,7 +90,8 @@ export const ChallanCurrentMonth = ({ userId }: { userId: string }) => {
           strong
           style={{
             textAlign: "start",
-
+            marginTop:"auto",
+            marginBottom:"auto",
             fontVariantNumeric: "tabular-nums",
           }}
         >
@@ -105,7 +106,7 @@ export const ChallanCurrentMonth = ({ userId }: { userId: string }) => {
           ) : (
             totalChallansCount?.data
               .map((d) => d.bill_amt)
-              .reduce((a, b) => a + b, 0)
+              .reduce((a, b) => a + b, 0).toFixed(2)
           )}
         </Text>
         <Suspense>

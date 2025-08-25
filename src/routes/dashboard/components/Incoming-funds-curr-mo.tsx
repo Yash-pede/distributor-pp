@@ -93,7 +93,8 @@ const IncomingFundsCurrentMonth = ({ userId }: { userId: string }) => {
           strong
           style={{
             textAlign: "start",
-
+            marginTop:"auto",
+            marginBottom:"auto",
             fontVariantNumeric: "tabular-nums",
           }}
         >

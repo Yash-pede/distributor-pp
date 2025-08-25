@@ -242,6 +242,7 @@ export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
               <Table.Column<Database["public"]["Tables"]["customers"]["Row"]>
                 dataIndex="full_name"
                 title="Full Name"
+                minWidth={150}
                 defaultFilteredValue={getDefaultFilter("full_name", filters)}
                 filterIcon={<SearchOutlined />}
                 filterDropdown={(props) => (
@@ -283,6 +284,7 @@ export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
                 dataIndex="phone"
                 title="Phone"
                 filterIcon={<SearchOutlined />}
+                minWidth={150}
                 filterDropdown={(props) => (
                   <FilterDropdown {...props} mapValue={(value) => value}>
                     <Select
@@ -307,6 +309,7 @@ export const CustomersList = ({ children }: { children?: React.ReactNode }) => {
               <Table.Column<Database["public"]["Tables"]["customers"]["Row"]>
                 dataIndex="sales_id"
                 title="Sales Person"
+                minWidth={150}
                 filterIcon={<SearchOutlined />}
                 filterDropdown={(props) => (
                   <FilterDropdown {...props} mapValue={(value) => value}>

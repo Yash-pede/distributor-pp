@@ -3,6 +3,7 @@ import {
   Button,
   Flex,
   Form,
+  Grid,
   Input,
   InputNumber,
   Modal,
@@ -22,7 +23,13 @@ import {
   useSelect,
   useTable,
 } from "@refinedev/antd";
-import { useGetIdentity, useList, useOne, useParsed, useUpdate } from "@refinedev/core";
+import {
+  useGetIdentity,
+  useList,
+  useOne,
+  useParsed,
+  useUpdate,
+} from "@refinedev/core";
 import {
   FilePdfFilled,
   PullRequestOutlined,
@@ -34,10 +41,15 @@ import { useGo } from "@refinedev/core";
 import FormItem from "antd/lib/form/FormItem";
 
 export const CustomersChallans = () => {
+  const breakpoint = Grid.useBreakpoint();
+
+  const isMobile =
+    typeof breakpoint.lg === "undefined" ? false : !breakpoint.lg;
+
   const [IdToUpdateReceived, setIdToUpdateReceived] = React.useState<any>(null);
   const { data: User } = useGetIdentity<any>();
   const go = useGo();
-  const{id} = useParsed();
+  const { id } = useParsed();
   const [userFilters, setUserFilters] = React.useState<{
     userType?: string;
     userId?: string;
@@ -59,10 +71,10 @@ export const CustomersChallans = () => {
           value: "BILLED",
         },
         {
-            field: "customer_id",
-            operator: "eq",
-            value: id,
-        }
+          field: "customer_id",
+          operator: "eq",
+          value: id,
+        },
       ],
     },
     sorters: {
@@ -187,7 +199,15 @@ export const CustomersChallans = () => {
         </Button>,
       ]}
     >
-      <Flex justify="space-between" align="center" gap={2}>
+      <Flex
+        align="center"
+        gap={2}
+        justify="space-between"
+        style={{
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: isMobile ? "flex-start" : "center",
+        }}
+      >
         {isLoadingChallansAmt ? (
           <>
             {Array.from({ length: 3 }).map((_, index) => (

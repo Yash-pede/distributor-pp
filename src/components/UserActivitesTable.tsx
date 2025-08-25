@@ -126,7 +126,7 @@ export const UserActivitesTable = (props: Props) => {
         <Table.Column
           dataIndex="author"
           title="User"
-          width="15%"
+          minWidth={150}
           filterIcon={<SearchOutlined />}
           render={(_, record: Database["public"]["Tables"]["logs"]["Row"]) => {
             if (isLoadingUsers) return <Skeleton.Button size="small" />;

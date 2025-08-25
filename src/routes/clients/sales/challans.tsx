@@ -3,6 +3,7 @@ import {
   Button,
   Flex,
   Form,
+  Grid,
   Input,
   InputNumber,
   Modal,
@@ -34,6 +35,12 @@ import { useGo } from "@refinedev/core";
 import FormItem from "antd/lib/form/FormItem";
 
 export const SalesChallans = () => {
+
+  const breakpoint = Grid.useBreakpoint();
+
+  const isMobile =
+    typeof breakpoint.lg === "undefined" ? false : !breakpoint.lg;
+
   const [IdToUpdateReceived, setIdToUpdateReceived] = React.useState<any>(null);
   const { data: User } = useGetIdentity<any>();
   const go = useGo();
@@ -187,7 +194,11 @@ export const SalesChallans = () => {
         </Button>,
       ]}
     >
-      <Flex justify="space-between" align="center" gap={2}>
+      <Flex align="center" gap={2} justify="space-between"
+        style={{
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: isMobile ? "flex-start" : "center",
+        }}>
         {isLoadingChallansAmt ? (
           <>
             {Array.from({ length: 3 }).map((_, index) => (
