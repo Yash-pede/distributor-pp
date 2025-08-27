@@ -35,14 +35,14 @@ export const ChallanCurrentMonth = ({ userId }: { userId: string }) => {
       },
     ],
     meta: {
-      select: "id , bill_amt , created_at",
+      select: "id , total_amt , created_at",
     },
     queryOptions: {
       refetchInterval: 1 * 60 * 60 * 1000,
     },
   });
   const totalAmount = totalChallansCount?.data
-    .map((d) => d.bill_amt)
+    .map((d) => d.total_amt)
     .reduce((a, b) => a + b, 0).toFixed(2);
 
   const textSize = totalAmount
@@ -105,14 +105,14 @@ export const ChallanCurrentMonth = ({ userId }: { userId: string }) => {
             />
           ) : (
             totalChallansCount?.data
-              .map((d) => d.bill_amt)
+              .map((d) => d.total_amt)
               .reduce((a, b) => a + b, 0).toFixed(2)
           )}
         </Text>
         <Suspense>
           <TinyAreaChart
             data={totalChallansCount?.data ?? []}
-            dataKey="bill_amt"
+            dataKey="total_amt"
           />
         </Suspense>
       </div>
