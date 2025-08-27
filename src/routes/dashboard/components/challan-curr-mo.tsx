@@ -33,6 +33,7 @@ export const ChallanCurrentMonth = ({ userId }: { userId: string }) => {
         operator: "lte",
         value: dayjs().endOf("month").toISOString(),
       },
+      { field: "status", operator: "eq", value: "BILLED" },
     ],
     meta: {
       select: "id , total_amt , created_at",
@@ -43,7 +44,8 @@ export const ChallanCurrentMonth = ({ userId }: { userId: string }) => {
   });
   const totalAmount = totalChallansCount?.data
     .map((d) => d.total_amt)
-    .reduce((a, b) => a + b, 0).toFixed(2);
+    .reduce((a, b) => a + b, 0)
+    .toFixed(2);
 
   const textSize = totalAmount
     ? totalAmount.toString().length > 2
@@ -90,8 +92,8 @@ export const ChallanCurrentMonth = ({ userId }: { userId: string }) => {
           strong
           style={{
             textAlign: "start",
-            marginTop:"auto",
-            marginBottom:"auto",
+            marginTop: "auto",
+            marginBottom: "auto",
             fontVariantNumeric: "tabular-nums",
           }}
         >
@@ -106,7 +108,8 @@ export const ChallanCurrentMonth = ({ userId }: { userId: string }) => {
           ) : (
             totalChallansCount?.data
               .map((d) => d.total_amt)
-              .reduce((a, b) => a + b, 0).toFixed(2)
+              .reduce((a, b) => a + b, 0)
+              .toFixed(2)
           )}
         </Text>
         <Suspense>
