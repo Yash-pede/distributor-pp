@@ -38,12 +38,12 @@ export const SalesShow = ({ children }: { children?: React.ReactNode }) => {
           <CustomerTable salesDetails={salesDetails.data} />
           <Divider />
           <UserInfoForm userDetails={salesDetails.data} />
-          <UserActivitesTable
+          {/* <UserActivitesTable
             userId={salesDetails.data.id}
             style={{
               marginTop: 32,
             }}
-          />
+          /> */}
         </Col>
       ) : (
         <Row
@@ -54,12 +54,12 @@ export const SalesShow = ({ children }: { children?: React.ReactNode }) => {
         >
           <Col span={16}>
             <CustomerTable salesDetails={salesDetails.data} />
-            <UserActivitesTable
+            {/* <UserActivitesTable
               userId={salesDetails.data.id}
               style={{
                 marginTop: 32,
               }}
-            />
+            /> */}
           </Col>
           <Col span={8}>
             <UserInfoForm userDetails={salesDetails.data} />

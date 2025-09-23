@@ -5,7 +5,7 @@ import { Database } from "@/utilities";
 import { TransactionList } from "./components/transaction-list";
 import { Button } from "antd";
 
-export const FundsList = ({ children }: { children?: React.ReactNode }) => {
+export const FundsListAll = ({ children }: { children?: React.ReactNode }) => {
   const { data: user } = useGetIdentity<any>();
   const { data: funds, isLoading: isFundsLoading } = useOne<
     Database["public"]["Tables"]["funds"]["Row"]
@@ -21,25 +21,8 @@ export const FundsList = ({ children }: { children?: React.ReactNode }) => {
       headerProps={{
         title: `In Hand : ${funds?.data?.total ? funds?.data?.total : "-"}`,
       }}
-      headerButtons={[
-        <CreateButton>Transfer Funds</CreateButton>,
-        <Link to="/funds/all">
-          <Button variant="outlined" size="large">
-            View all
-          </Button>
-        </Link>,
-      ]}
     >
-      <TransactionList
-        userId={user.id}
-        additionalFilters={[
-          {
-            field: "to_user_id",
-            operator: "eq",
-            value: import.meta.env.VITE_ADMIN_ID,
-          },
-        ]}
-      />
+      <TransactionList userId={user.id} />
       {children}
     </List>
   );

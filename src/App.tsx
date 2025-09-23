@@ -33,10 +33,10 @@ import { InventoryDetails, InventoryList } from "./routes/inventory";
 import { ChallanCreate, ChallanList, ChallanShow, ReqDeletionChallan } from "./routes/challan";
 import { CustomersChallans, CustomersCreate, CustomersList, CustomersShow } from "./routes/clients/customers";
 import { ChallanPdf } from "./routes/challan/components/challanPdf";
-import { FundsCreate, FundsList } from "./routes/funds";
+import { FundsCreate, FundsList, FundsListAll } from "./routes/funds";
 import { TargetCreate } from "./components/targets/create";
-import DashboardHome from "./routes/dashboard/show";
 import { MoneyList, ReportProducts, ReportsList, Targets, UserSelect } from "./routes/reports";
+import { NewDashboard } from "./routes/dashboard";
 
 function App() {
   return (
@@ -87,7 +87,7 @@ function App() {
                       />
 
                       <Route path="/dashboard">
-                        <Route index element={<DashboardHome />} />
+                        <Route index element={<NewDashboard />} />
                       </Route>
 
                       <Route path="/products">
@@ -101,6 +101,7 @@ function App() {
                       <Route path="funds">
                       <Route index element={<FundsList />} />
                       <Route path="create" element={<FundsCreate />} />
+                      <Route path="all" element={<FundsListAll />} />
                     </Route>
                       <Route path="/inventory">
                         <Route index element={<InventoryList />} /> 

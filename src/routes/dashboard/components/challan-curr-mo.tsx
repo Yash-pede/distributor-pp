@@ -1,65 +1,28 @@
-import { Suspense } from "react";
 import { Text } from "@/components";
-import { Database } from "@/utilities";
 import { ShopOutlined } from "@ant-design/icons";
-import { useList } from "@refinedev/core";
+import { useGo, useOne } from "@refinedev/core";
 import { Card, Skeleton } from "antd";
 import dayjs from "dayjs";
-import TinyAreaChart from "../../../components/charts/area-chart";
 import IconWrapper from "./icon-wrapper";
+import { Database } from "@/utilities";
 
-export const ChallanCurrentMonth = ({ userId }: { userId: string }) => {
-  const { data: totalChallansCount, isLoading } = useList<
-    Database["public"]["Tables"]["challan"]["Row"]
+export const TotalChallanAmt = () => {
+  const go = useGo();
+  const { data: totalChallansCount, isLoading } = useOne<
+    Database["public"]["Tables"]["funds"]["Row"]
   >({
-    resource: "challan",
-    pagination: {
-      current: 1,
-      pageSize: 1000,
-    },
-    filters: [
-      {
-        field: "distributor_id",
-        operator: "eq",
-        value: userId,
-      },
-      {
-        field: "created_at",
-        operator: "gte",
-        value: dayjs().startOf("month").toISOString(),
-      },
-      {
-        field: "created_at",
-        operator: "lte",
-        value: dayjs().endOf("month").toISOString(),
-      },
-      { field: "status", operator: "eq", value: "BILLED" },
-    ],
-    meta: {
-      select: "id , total_amt , created_at",
-    },
-    queryOptions: {
-      refetchInterval: 1 * 60 * 60 * 1000,
-    },
+    resource: "funds",
+    id: import.meta.env.VITE_ADMIN_ID as string,
   });
-  const totalAmount = totalChallansCount?.data
-    .map((d) => d.total_amt)
-    .reduce((a, b) => a + b, 0)
-    .toFixed(2);
-
-  const textSize = totalAmount
-    ? totalAmount.toString().length > 2
-      ? "lg"
-      : "md"
-    : "xl";
 
   return (
     <Card
-      style={{ height: "96px", padding: 0 }}
+      style={{ height: "96px", padding: 0, cursor: "pointer" }}
       bodyStyle={{
         padding: "8px 8px 8px 12px",
       }}
       size="small"
+      onClick={() => go({ to: "/challan" })}
     >
       <div
         style={{
@@ -78,7 +41,7 @@ export const ChallanCurrentMonth = ({ userId }: { userId: string }) => {
           />
         </IconWrapper>
         <Text size="md" className="secondary" style={{ marginLeft: "8px" }}>
-          Total Bill amt as of {dayjs().format("MMMM YYYY")}
+          Total Bill Amount {dayjs().format("MMMM YYYY")}
         </Text>
       </div>
       <div
@@ -88,12 +51,11 @@ export const ChallanCurrentMonth = ({ userId }: { userId: string }) => {
         }}
       >
         <Text
-          size={textSize}
+          size="lg"
           strong
           style={{
             textAlign: "start",
-            marginTop: "auto",
-            marginBottom: "auto",
+
             fontVariantNumeric: "tabular-nums",
           }}
         >
@@ -106,18 +68,9 @@ export const ChallanCurrentMonth = ({ userId }: { userId: string }) => {
               }}
             />
           ) : (
-            totalChallansCount?.data
-              .map((d) => d.total_amt)
-              .reduce((a, b) => a + b, 0)
-              .toFixed(2)
+            Math.round(totalChallansCount?.data?.total_amt || 0)
           )}
         </Text>
-        <Suspense>
-          <TinyAreaChart
-            data={totalChallansCount?.data ?? []}
-            dataKey="total_amt"
-          />
-        </Suspense>
       </div>
     </Card>
   );

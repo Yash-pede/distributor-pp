@@ -1,37 +1,40 @@
 import { Database } from "@/utilities";
 import { getTransferColor } from "@/utilities/functions";
 import { DateField, useTable } from "@refinedev/antd";
-import { useList } from "@refinedev/core";
+import { CrudFilters, useList } from "@refinedev/core";
 import { Table, Tag } from "antd";
 import React from "react";
 
 type Props = {
   userId: string;
+  additionalFilters?: CrudFilters;
 };
 
 export const TransactionList = (props: Props) => {
-  const { tableProps, tableQueryResult, filters } = useTable<
+  const permanentFilters: CrudFilters = [
+    {
+      operator: "or",
+      value: [
+        {
+          field: "from_user_id",
+          operator: "eq",
+          value: props.userId,
+        },
+        {
+          field: "to_user_id",
+          operator: "eq",
+          value: props.userId,
+        },
+      ],
+    },
+    ...(props.additionalFilters || []),
+  ];
+  const { tableProps, tableQueryResult } = useTable<
     Database["public"]["Tables"]["transfers"]["Row"]
   >({
     resource: "transfers",
     filters: {
-      permanent: [
-        {
-          operator: "or",
-          value: [
-            {
-              field: "from_user_id",
-              operator: "eq",
-              value: props.userId,
-            },
-            {
-              field: "to_user_id",
-              operator: "eq",
-              value: props.userId,
-            },
-          ],
-        },
-      ],
+      permanent: permanentFilters,
     },
     sorters: {
       initial: [
@@ -39,7 +42,7 @@ export const TransactionList = (props: Props) => {
           field: "created_at",
           order: "desc",
         },
-      ]
+      ],
     },
     queryOptions: {
       enabled: !!props.userId,
