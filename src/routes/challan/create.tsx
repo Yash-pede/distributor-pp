@@ -51,7 +51,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
     },
   });
 
-  const { selectProps: productSelectProps } = useSelect({
+  const { selectProps: productSelectProps, query:productResult } = useSelect({
     resource: "products",
     optionLabel: "name",
     optionValue: "id",

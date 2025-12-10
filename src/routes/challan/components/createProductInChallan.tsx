@@ -35,9 +35,13 @@ const CreateProductInChallan = ({
       ...values,
       quantity: totalQuantity,
       actual_q: values.quantity,
+      mrp: product?.data.mrp,
+      name: product?.data.name,
+      gst_slab: product?.data.gst_slab,
+      HSN_code: product?.data.HSN_code,
     };
 
-    setChallan((prevChallan: any[]) => {
+    setChallan((prevChallan) => {
       setOpenDrawer(false);
       if (prevChallan) {
         return [...prevChallan, modifiedValues];
