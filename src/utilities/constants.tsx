@@ -14,6 +14,10 @@ export type challanProductAddingType = {
   free_q: number;
   actual_q: number;
   selling_price: number;
+  gst_slab?: string;
+  HSN_code?: string;
+  mrp?: number;
+  name?: string;
 };
 
 export const reportTypes = [

@@ -16,7 +16,7 @@ import { IconX } from "@tabler/icons-react";
 export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
   const go = useGo();
   const [challan, setChallan] = React.useState<
-    challanProductAddingType[] | any
+    challanProductAddingType[]
   >([]);
   const [customer, setCustomer] = React.useState<any>();
   const [totalAmount, setTotalAmount] = React.useState<any>();
@@ -217,6 +217,20 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
           style={{
             overflow: "auto",
           }}
+          footer={() => (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "20px",
+                fontWeight: "bold",
+                fontSize: "16px",
+              }}
+            >
+              {/* <div>Bill Amount: {billAmount}</div> */}
+              <div>Total Amount: {totalAmount}</div>
+            </div>
+          )}
           columns={[
             {
               title: "Product",
@@ -250,6 +264,22 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
             {
               title: "Total",
               dataIndex: "quantity",
+            },
+            {
+              title: "total Amount",
+              render: (value) => {
+                const actualQuantity = value.actual_q || 0;
+                const sellingPrice = value.selling_price || 0;
+                const discount = value.discount || 0;
+
+                const subtotal = actualQuantity * sellingPrice;
+                const discountAmount = subtotal * (discount / 100);
+                const totalAmount = subtotal - discountAmount;
+
+                return (
+                  <Typography.Text>{totalAmount.toFixed(2)}</Typography.Text>
+                );
+              }
             },
             {
               title: "Action",
