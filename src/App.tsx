@@ -24,18 +24,41 @@ import { Layout } from "./components/layout";
 import { ProductsList, ProductsEdit } from "./routes/products";
 import { auditLogProvider } from "./utilities/providers/auditlogProvider";
 
-import { SalesChallans, SalesCreate, SalesEdit, SalesList, SalesShow } from "./routes/clients/sales";
+import {
+  SalesChallans,
+  SalesCreate,
+  SalesEdit,
+  SalesList,
+  SalesShow,
+} from "./routes/clients/sales";
 import { AuditLogList } from "./routes/audit-log";
 import { AuthorizeUserRole } from "./components/layout/authorize";
 import { ShoppingCartProvider } from "./contexts/color-mode/cart/ShoppingCartContext";
 import { OrdersList, OrdersShow } from "./routes/orders";
 import { InventoryDetails, InventoryList } from "./routes/inventory";
-import { ChallanCreate, ChallanList, ChallanShow, ReqDeletionChallan } from "./routes/challan";
-import { CustomersChallans, CustomersCreate, CustomersList, CustomersShow } from "./routes/clients/customers";
+import {
+  ChallanCreate,
+  ChallanList,
+  ChallanShow,
+  GstBillView,
+  ReqDeletionChallan,
+} from "./routes/challan";
+import {
+  CustomersChallans,
+  CustomersCreate,
+  CustomersList,
+  CustomersShow,
+} from "./routes/clients/customers";
 import { ChallanPdf } from "./routes/challan/components/challanPdf";
 import { FundsCreate, FundsList, FundsListAll } from "./routes/funds";
 import { TargetCreate } from "./components/targets/create";
-import { MoneyList, ReportProducts, ReportsList, Targets, UserSelect } from "./routes/reports";
+import {
+  MoneyList,
+  ReportProducts,
+  ReportsList,
+  Targets,
+  UserSelect,
+} from "./routes/reports";
 import { NewDashboard } from "./routes/dashboard";
 
 function App() {
@@ -59,7 +82,7 @@ function App() {
                 liveMode: "auto",
               }}
             >
-             <DocumentTitleHandler
+              <DocumentTitleHandler
                 handler={(title) =>
                   `${
                     title.resource?.name ? title.resource?.name + "| " : ""
@@ -91,7 +114,7 @@ function App() {
                       </Route>
 
                       <Route path="/products">
-                        <Route index element={<ProductsList />    } />
+                        <Route index element={<ProductsList />} />
                         <Route path=":id" element={<ProductsEdit />} />
                       </Route>
                       <Route path="/orders">
@@ -99,20 +122,24 @@ function App() {
                         <Route path=":id" element={<OrdersShow />} />
                       </Route>
                       <Route path="funds">
-                      <Route index element={<FundsList />} />
-                      <Route path="create" element={<FundsCreate />} />
-                      <Route path="all" element={<FundsListAll />} />
-                    </Route>
+                        <Route index element={<FundsList />} />
+                        <Route path="create" element={<FundsCreate />} />
+                        <Route path="all" element={<FundsListAll />} />
+                      </Route>
                       <Route path="/inventory">
-                        <Route index element={<InventoryList />} /> 
+                        <Route index element={<InventoryList />} />
                         <Route path="details" element={<InventoryDetails />} />
                       </Route>
                       <Route path="/challan">
                         <Route index element={<ChallanList />} />
                         <Route path="create" element={<ChallanCreate />} />
-                        <Route path="req-deletion" element={<ReqDeletionChallan />} />
+                        <Route
+                          path="req-deletion"
+                          element={<ReqDeletionChallan />}
+                        />
                         <Route path=":id" element={<ChallanShow />} />
                         <Route path="pdf/:id" element={<ChallanPdf />} />
+                        <Route path="pdf/gst/:id" element={<GstBillView />} />
                       </Route>
 
                       <Route path="/clients">
@@ -120,52 +147,62 @@ function App() {
                           <Route index element={<SalesList />} />
                           <Route path="create" element={<SalesCreate />} />
                           <Route path="edit/:id" element={<SalesEdit />} />
-                          <Route path="challans/:id" element={< SalesChallans/>} />
+                          <Route
+                            path="challans/:id"
+                            element={<SalesChallans />}
+                          />
                           <Route path=":id" element={<SalesShow />} />
                         </Route>
                         <Route path="customers">
                           <Route index element={<CustomersList />} />
-                          <Route path="challans/:id" element={<CustomersChallans />} />
+                          <Route
+                            path="challans/:id"
+                            element={<CustomersChallans />}
+                          />
                           <Route path="create" element={<CustomersCreate />} />
                           <Route path=":id" element={<CustomersShow />} />
                         </Route>
                       </Route>
 
                       <Route path="/administration">
-                      <Route path="settings">
-                        <Route index element={<>Settings</>} />
-                        <Route
-                          path="user-credentials/:id"
-                          element={
-                            <>
-                              Editing the users details is temporaryly disabled
-                            </>
-                          }
-                        />
-                      </Route>
-                      <Route path="targets">
+                        <Route path="settings">
+                          <Route index element={<>Settings</>} />
+                          <Route
+                            path="user-credentials/:id"
+                            element={
+                              <>
+                                Editing the users details is temporaryly
+                                disabled
+                              </>
+                            }
+                          />
+                        </Route>
+                        <Route path="targets">
                           <Route path="create/:id" element={<TargetCreate />} />
                         </Route>
                         <Route path="audit-log">
                           <Route index element={<AuditLogList />} />
                         </Route>
                         <Route path="reports">
-                        <Route index element={<ReportsList />} />
-                        <Route path="targets">
-                          <Route index element={<UserSelect />} />
-                          <Route path=":id" element={<Targets />} />
-                          <Route path="create/:id" element={<TargetCreate />} />
+                          <Route index element={<ReportsList />} />
+                          <Route path="targets">
+                            <Route index element={<UserSelect />} />
+                            <Route path=":id" element={<Targets />} />
+                            <Route
+                              path="create/:id"
+                              element={<TargetCreate />}
+                            />
+                          </Route>
+                          <Route path="money">
+                            <Route index element={<MoneyList />} />
+                          </Route>
+                          <Route path="products">
+                            <Route index element={<ReportProducts />} />
+                          </Route>
                         </Route>
-                        <Route path="money">
-                          <Route index element={<MoneyList />} />
-                        </Route>
-                        <Route path="products">
-                          <Route index element={<ReportProducts />} />
-                        </Route>
-                      </Route>
                       </Route>
                     </Route>
-                          
+
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>
                   <Route

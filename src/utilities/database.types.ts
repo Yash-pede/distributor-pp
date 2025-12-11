@@ -104,6 +104,7 @@ export type Database = {
           address: string
           created_at: string
           distributor_id: string
+          dl_no: string[] | null
           email: string | null
           full_name: string
           id: number
@@ -118,6 +119,7 @@ export type Database = {
           address: string
           created_at?: string
           distributor_id: string
+          dl_no?: string[] | null
           email?: string | null
           full_name: string
           id?: number
@@ -132,6 +134,7 @@ export type Database = {
           address?: string
           created_at?: string
           distributor_id?: string
+          dl_no?: string[] | null
           email?: string | null
           full_name?: string
           id?: number
@@ -525,7 +528,12 @@ export type Database = {
     }
     Enums: {
       challan_status: "BILLED" | "REQ_DELETION" | "DELETED"
-      gst_bill_status: "CREATED" | "PENDING" | "REQUESTED" | "DELETED"
+      gst_bill_status:
+        | "CREATED"
+        | "PENDING"
+        | "REQUESTED"
+        | "DELETED"
+        | "CANCELLED"
       order_status:
         | "Pending"
         | "Fulfilled"
@@ -662,7 +670,13 @@ export const Constants = {
   public: {
     Enums: {
       challan_status: ["BILLED", "REQ_DELETION", "DELETED"],
-      gst_bill_status: ["CREATED", "PENDING", "REQUESTED", "DELETED"],
+      gst_bill_status: [
+        "CREATED",
+        "PENDING",
+        "REQUESTED",
+        "DELETED",
+        "CANCELLED",
+      ],
       order_status: [
         "Pending",
         "Fulfilled",

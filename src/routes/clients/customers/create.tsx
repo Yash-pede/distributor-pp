@@ -1,8 +1,8 @@
 import React from "react";
 import { Create, ThemedTitleV2, useSelect } from "@refinedev/antd";
-import { Drawer, Form, Input, Select, Space } from "antd";
+import { Button, Drawer, Form, Input, Select, Space } from "antd";
 import { useCreate, useGetIdentity, useGo } from "@refinedev/core";
-import { UserSwitchOutlined } from "@ant-design/icons";
+import { PlusOutlined, UserSwitchOutlined } from "@ant-design/icons";
 import { CustomersList } from "./list";
 
 export const CustomersCreate = () => {
@@ -10,6 +10,7 @@ export const CustomersCreate = () => {
   const go = useGo();
   const { mutate } = useCreate();
   const { data: User } = useGetIdentity<any>();
+  const [dlnos, setDlnos] = React.useState<string[]>([]);
 
   const { selectProps: salesSelectProps } = useSelect({
     resource: "profiles",
@@ -36,7 +37,8 @@ export const CustomersCreate = () => {
     userId: string,
     sales_id: string,
     specialization: string,
-    address: string
+    address: string,
+    dl_no: string[]
   ) => {
     // console.log("CreateCustomer", email, phone, full_name, userId, sales_id);
     mutate({
@@ -49,6 +51,7 @@ export const CustomersCreate = () => {
         email,
         specialization,
         address,
+        dl_no,
       },
     });
   };
@@ -61,7 +64,8 @@ export const CustomersCreate = () => {
       User?.id,
       values.sales_id,
       values.specialization,
-      values.address
+      values.address,
+      dlnos
     );
 
     go({
@@ -138,6 +142,35 @@ export const CustomersCreate = () => {
               }
             >
               <Select {...salesSelectProps} />
+            </Form.Item>
+            <Form.Item label="DL Number">
+              {dlnos.map((dl, index) => (
+                <Input
+                  key={index}
+                  placeholder="Enter DL Number"
+                  value={dl}
+                  onChange={(e) => {
+                    const updated = [...dlnos];
+                    updated[index] = e.target.value;
+                    setDlnos(updated);
+                    form.setFieldValue("dl_no", updated);
+                  }}
+                  style={{ marginTop: index === 0 ? 0 : "1rem" }}
+                />
+              ))}
+
+              <Button
+                size="large"
+                style={{ width: "100%", marginTop: "1rem" }}
+                type="dashed"
+                onClick={() => {
+                  const updated = [...dlnos, ""];
+                  setDlnos(updated);
+                  form.setFieldValue("dl_no", updated);
+                }}
+              >
+                <PlusOutlined /> Add another
+              </Button>
             </Form.Item>
           </Form>
         </Create>

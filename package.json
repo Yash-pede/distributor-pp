@@ -43,7 +43,7 @@
     "vite-tsconfig-paths": "^4.3.2"
   },
   "scripts": {
-    "dev": "refine dev -- --port 5273",
+    "dev": "refine dev -- --port 5274",
     "build": "tsc && refine build",
     "preview": "refine start",
     "refine": "refine"

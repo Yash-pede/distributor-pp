@@ -122,16 +122,28 @@ export const ChallanShow = () => {
                 View Pdf
               </Button>
               <Button
-                type="default"
+                type="primary"
+                danger={challan?.data.gst_bill_status === "CANCELLED"}
                 onClick={() =>
-                  mutate({
-                    id: challanId,
-                    values: { gst_bill_status: "REQUESTED" },
-                  })
+                  challan?.data.gst_bill_status === "PENDING"
+                    ? mutate({
+                        id: challanId,
+                        values: { gst_bill_status: "REQUESTED" },
+                      })
+                    : go({ to: `/challan/pdf/gst/${challanId}` })
                 }
-                disabled={challan?.data.gst_bill_status !== "PENDING" && challan?.data.status === "BILLED"}
+                disabled={
+                  challan?.data.gst_bill_status === "CANCELLED" ||
+                  challan?.data.gst_bill_status === "REQUESTED"
+                }
               >
-                Request GST Bill
+                {challan?.data.gst_bill_status === "PENDING"
+                  ? "Generate GST Bill"
+                  : challan?.data.gst_bill_status === "REQUESTED"
+                  ? "GST Bill Requested"
+                  : challan?.data.gst_bill_status === "CREATED"
+                  ? "View GST Bill"
+                  : "GST Bill Cancelled"}
               </Button>
               <Button
                 type="default"
