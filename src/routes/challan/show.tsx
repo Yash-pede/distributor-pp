@@ -112,14 +112,26 @@ export const ChallanShow = () => {
               }}
             >
               <Flex gap={10} align="center">
-              <StarOutlined className="sm" />
-              <Text size="xl">Challan: {challanId}</Text>
+                <StarOutlined className="sm" />
+                <Text size="xl">Challan: {challanId}</Text>
               </Flex>
               <Button
                 type="primary"
                 onClick={() => go({ to: `/challan/pdf/${challanId}` })}
               >
                 View Pdf
+              </Button>
+              <Button
+                type="default"
+                onClick={() =>
+                  mutate({
+                    id: challanId,
+                    values: { gst_bill_status: "REQUESTED" },
+                  })
+                }
+                disabled={challan?.data.gst_bill_status !== "PENDING" && challan?.data.status === "BILLED"}
+              >
+                Request GST Bill
               </Button>
               <Button
                 type="default"
