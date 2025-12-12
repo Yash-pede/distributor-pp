@@ -10,7 +10,10 @@ export const CustomersCreate = () => {
   const go = useGo();
   const { mutate } = useCreate();
   const { data: User } = useGetIdentity<any>();
-  const [dlnos, setDlnos] = React.useState<string[]>([]);
+  const [metadata, setMetadata] = React.useState<{
+    dl_no: string[];
+    gst_no: string;
+  }>({ dl_no: [], gst_no: "" });
 
   const { selectProps: salesSelectProps } = useSelect({
     resource: "profiles",
@@ -38,7 +41,7 @@ export const CustomersCreate = () => {
     sales_id: string,
     specialization: string,
     address: string,
-    dl_no: string[]
+    metadata: { dl_no: string[]; gst_no: string }
   ) => {
     // console.log("CreateCustomer", email, phone, full_name, userId, sales_id);
     mutate({
@@ -51,7 +54,7 @@ export const CustomersCreate = () => {
         email,
         specialization,
         address,
-        dl_no,
+        metadata,
       },
     });
   };
@@ -65,9 +68,8 @@ export const CustomersCreate = () => {
       values.sales_id,
       values.specialization,
       values.address,
-      dlnos
+      metadata
     );
-
     go({
       to: { action: "list", resource: "customers" },
       type: "push",
@@ -143,16 +145,26 @@ export const CustomersCreate = () => {
             >
               <Select {...salesSelectProps} />
             </Form.Item>
+            <Form.Item label="GST Number">
+              <Input
+                placeholder="Enter GST Number"
+                value={metadata.gst_no}
+                onChange={(e) => {
+                  setMetadata({ ...metadata, gst_no: e.target.value });
+                  form.setFieldValue("gst_no", e.target.value);
+                }}
+              />
+            </Form.Item>
             <Form.Item label="DL Number">
-              {dlnos.map((dl, index) => (
+              {metadata.dl_no.map((dl, index) => (
                 <Input
                   key={index}
                   placeholder="Enter DL Number"
                   value={dl}
                   onChange={(e) => {
-                    const updated = [...dlnos];
+                    const updated = [...metadata.dl_no];
                     updated[index] = e.target.value;
-                    setDlnos(updated);
+                    setMetadata({ ...metadata, dl_no: updated });
                     form.setFieldValue("dl_no", updated);
                   }}
                   style={{ marginTop: index === 0 ? 0 : "1rem" }}
@@ -164,8 +176,8 @@ export const CustomersCreate = () => {
                 style={{ width: "100%", marginTop: "1rem" }}
                 type="dashed"
                 onClick={() => {
-                  const updated = [...dlnos, ""];
-                  setDlnos(updated);
+                  const updated = [...metadata.dl_no, ""];
+                  setMetadata({ ...metadata, dl_no: updated });
                   form.setFieldValue("dl_no", updated);
                 }}
               >

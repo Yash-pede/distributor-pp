@@ -22,6 +22,7 @@ export type Database = {
           distributor_id: string
           gst_bill_status: Database["public"]["Enums"]["gst_bill_status"]
           id: number
+          metadata: Json | null
           pending_amt: number
           product_info: Json
           received_amt: number
@@ -36,6 +37,7 @@ export type Database = {
           distributor_id: string
           gst_bill_status?: Database["public"]["Enums"]["gst_bill_status"]
           id?: number
+          metadata?: Json | null
           pending_amt: number
           product_info: Json
           received_amt: number
@@ -50,6 +52,7 @@ export type Database = {
           distributor_id?: string
           gst_bill_status?: Database["public"]["Enums"]["gst_bill_status"]
           id?: number
+          metadata?: Json | null
           pending_amt?: number
           product_info?: Json
           received_amt?: number
@@ -104,10 +107,10 @@ export type Database = {
           address: string
           created_at: string
           distributor_id: string
-          dl_no: string[] | null
           email: string | null
           full_name: string
           id: number
+          metadata: Json | null
           pending_amt: number
           phone: string
           received_amt: number
@@ -119,10 +122,10 @@ export type Database = {
           address: string
           created_at?: string
           distributor_id: string
-          dl_no?: string[] | null
           email?: string | null
           full_name: string
           id?: number
+          metadata?: Json | null
           pending_amt?: number
           phone: string
           received_amt?: number
@@ -134,10 +137,10 @@ export type Database = {
           address?: string
           created_at?: string
           distributor_id?: string
-          dl_no?: string[] | null
           email?: string | null
           full_name?: string
           id?: number
+          metadata?: Json | null
           pending_amt?: number
           phone?: string
           received_amt?: number
