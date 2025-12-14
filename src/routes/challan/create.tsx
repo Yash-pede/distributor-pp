@@ -15,22 +15,31 @@ import { IconX } from "@tabler/icons-react";
 
 export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
   const go = useGo();
-  const [challan, setChallan] = React.useState<
-    challanProductAddingType[]
-  >([]);
+  const [challan, setChallan] = React.useState<challanProductAddingType[]>([]);
   const [customer, setCustomer] = React.useState<any>();
   const [totalAmount, setTotalAmount] = React.useState<any>();
   const [billAmount, setBillAmount] = React.useState<any>();
   const { data: User } = useGetIdentity<any>();
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 
-  const { data: bossData, isLoading: isLoadingBossId } = useOne<
+  const { data: userData } = useOne<
     Database["public"]["Tables"]["profiles"]["Row"]
   >({
     resource: "profiles",
     id: User?.id,
     queryOptions: {
-      enabled: !!User && sales,
+      enabled: !!User,
+    },
+  });
+
+  // Fetch customer full data when selected
+  const { data: selectedCustomerData } = useOne<
+    Database["public"]["Tables"]["customers"]["Row"]
+  >({
+    resource: "customers",
+    id: customer || undefined,
+    queryOptions: {
+      enabled: !!customer,
     },
   });
 
@@ -42,7 +51,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
       {
         field: "distributor_id",
         operator: "eq",
-        value: sales ? bossData?.data?.boss_id : User?.id,
+        value: sales ? userData?.data?.boss_id : User?.id,
       },
     ],
     pagination: {
@@ -51,7 +60,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
     },
   });
 
-  const { selectProps: productSelectProps, query:productResult } = useSelect({
+  const { selectProps: productSelectProps, query: productResult } = useSelect({
     resource: "products",
     optionLabel: "name",
     optionValue: "id",
@@ -64,20 +73,19 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
           .map((stock) => stock.product_id),
       },
     ],
-    onSearch: (value) => {
-      return [
-        {
-          field: "name",
-          operator: "contains",
-          value,
-        },
-      ];
-    },
+    onSearch: (value) => [
+      {
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
     pagination: {
       current: 1,
       pageSize: 1000,
     },
   });
+
   const { data: productsData, isLoading: isLoadingProductsData } = useList<
     Database["public"]["Tables"]["products"]["Row"]
   >({
@@ -98,55 +106,76 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
     },
   });
 
-  const { mutate, isError } =
-    useCreate<Database["public"]["Tables"]["challan"]["Insert"]>();
+  const { mutate, isError } = useCreate<
+    Database["public"]["Tables"]["challan"]["Insert"]
+  >();
 
   useEffect(() => {
     if (challan && challan.length > 0) {
-    
       const newTotalAmount = challan.reduce((total: number, item: any) => {
         const actualQuantity = item.actual_q || 0;
         const sellingPrice = item.selling_price || 0;
         const discount = item.discount || 0;
-
         const subtotal = actualQuantity * sellingPrice;
         const discountAmount = subtotal * (discount / 100);
-
         return total + subtotal - discountAmount;
       }, 0);
 
-    
       const newBillAmount = challan.reduce((total: number, item: any) => {
         const actualQuantity = item.actual_q || 0;
         const sellingPrice = item.selling_price || 0;
-
         return total + actualQuantity * sellingPrice;
       }, 0);
 
-    
       setBillAmount(parseFloat(newBillAmount.toFixed(2)));
       setTotalAmount(parseFloat(newTotalAmount.toFixed(2)));
     } else {
-    
       setBillAmount(0);
       setTotalAmount(0);
     }
   }, [challan]);
 
+  // Build metadata conditionally
+  const buildMetadata = () => {
+    const baseMetadata = {
+      distributor: sales ? null : userData?.data,
+    };
+
+    // Only add customer to metadata if customer is selected
+    if (customer && selectedCustomerData?.data) {
+      return {
+        ...baseMetadata,
+        customer: selectedCustomerData.data, // Full customer data
+      };
+    }
+
+    // Only add sales to metadata if sales mode is active
+    if (sales) {
+      return {
+        ...baseMetadata,
+        sales: userData?.data,
+      };
+    }
+
+    return baseMetadata;
+  };
+
   const onChallanCreate = () => {
     mutate({
       resource: "challan",
       values: {
-        distributor_id: sales ? bossData?.data?.boss_id : User?.id,
+        distributor_id: sales ? userData?.data?.boss_id : User?.id,
         product_info: challan,
         total_amt: totalAmount,
         received_amt: 0,
         pending_amt: totalAmount,
-        customer_id: customer,
+        customer_id: customer || null, // Still send customer_id for DB relation
         bill_amt: billAmount,
         sales_id: sales ? User?.id : null,
+        metadata: buildMetadata(), // Conditional metadata
       },
     });
+
     if (!isError) {
       go({
         to: { action: "list", resource: "challan" },
@@ -157,6 +186,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
       });
     }
   };
+
   const { selectProps: customerSelectProps } = useSelect<
     Database["public"]["Tables"]["customers"]["Row"]
   >({
@@ -187,10 +217,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
         }
         headerButtons={
           <>
-            <Button
-              style={{ margin: "10px 0" }}
-              onClick={() => setOpenDrawer(true)}
-            >
+            <Button style={{ margin: "10px 0" }} onClick={() => setOpenDrawer(true)}>
               Add Products
             </Button>
           </>
@@ -214,9 +241,7 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
         </div>
         <Table
           dataSource={challan}
-          style={{
-            overflow: "auto",
-          }}
+          style={{ overflow: "auto" }}
           footer={() => (
             <div
               style={{
@@ -227,7 +252,6 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
                 fontSize: "16px",
               }}
             >
-              {/* <div>Bill Amount: {billAmount}</div> */}
               <div>Total Amount: {totalAmount}</div>
             </div>
           )}
@@ -239,68 +263,43 @@ export const ChallanCreate = ({ sales }: { sales?: boolean }) => {
                 if (isLoadingProductsData) return <Skeleton.Button />;
                 return (
                   <Typography.Text>
-                    {
-                      productsData?.data?.find(
-                        (product) => product.id === value
-                      )?.name
-                    }
+                    {productsData?.data?.find((product) => product.id === value)?.name}
                   </Typography.Text>
                 );
               },
             },
-            {
-              title: "Quantity",
-              dataIndex: "actual_q",
-            },
-
-            {
-              title: "Free",
-              dataIndex: "free_q",
-            },
-            {
-              title: "Price",
-              dataIndex: "selling_price",
-            },
-            {
-              title: "Total",
-              dataIndex: "quantity",
-            },
+            { title: "Quantity", dataIndex: "actual_q" },
+            { title: "Free", dataIndex: "free_q" },
+            { title: "Price", dataIndex: "selling_price" },
+            { title: "Total", dataIndex: "quantity" },
             {
               title: "total Amount",
               render: (value) => {
                 const actualQuantity = value.actual_q || 0;
                 const sellingPrice = value.selling_price || 0;
                 const discount = value.discount || 0;
-
                 const subtotal = actualQuantity * sellingPrice;
                 const discountAmount = subtotal * (discount / 100);
                 const totalAmount = subtotal - discountAmount;
-
-                return (
-                  <Typography.Text>{totalAmount.toFixed(2)}</Typography.Text>
-                );
-              }
+                return <Typography.Text>{totalAmount.toFixed(2)}</Typography.Text>;
+              },
             },
             {
               title: "Action",
-              render: (value) => {
-                return (
-                  <Button
-                    variant="filled"
-                    color="danger"
-                    size="small"
-                    onClick={() =>
-                      setChallan((prev: challanProductAddingType[]) =>
-                        prev.filter(
-                          (item) => item.product_id !== value.product_id
-                        )
-                      )
-                    }
-                  >
-                    <IconX />
-                  </Button>
-                );
-              },
+              render: (value) => (
+                <Button
+                  variant="filled"
+                  color="danger"
+                  size="small"
+                  onClick={() =>
+                    setChallan((prev: challanProductAddingType[]) =>
+                      prev.filter((item) => item.product_id !== value.product_id)
+                    )
+                  }
+                >
+                  <IconX />
+                </Button>
+              ),
             },
           ]}
         />
